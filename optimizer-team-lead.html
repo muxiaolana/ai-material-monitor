@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>投放团队管理中台 · 优化师总负责人</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;color:#1e293b;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .kpi{background:#ffffff;}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;color:#64748b;font-size:13px;}
+  .sidebar a.active{background:#f5f3ff;color:#7c3aed;border-left:3px solid #8b5cf6;}
+  .sidebar a:hover{color:#1e293b;background:#f8fafc;}
+  .pill{padding:2px 8px;border-radius:999px;font-size:11px;}
+  .grade-S{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+  .grade-A{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe;}
+  .grade-B{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}
+  .grade-C{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+  .grade-D{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;}
+  table{width:100%;font-size:13px;}
+  th{text-align:left;font-weight:500;color:#64748b;padding:10px 8px;border-bottom:1px solid #e2e8f0;}
+  td{padding:12px 8px;border-bottom:1px solid #f1f5f9;color:#334155;}
+  .bar{height:6px;background:#e2e8f0;border-radius:999px;overflow:hidden;}
+  .bar > span{display:block;height:100%;background:linear-gradient(90deg,#8b5cf6,#c4b5fd);}
+  canvas{max-height:500px;}
+
+  /* === Light Flat Overrides (Violet Theme) === */
+  aside{background:#ffffff !important;border-color:#e2e8f0 !important;}
+  aside .text-sm, aside .text-\[11px\]{color:#64748b !important;}
+  aside .font-semibold{color:#1e293b !important;}
+  header{border-color:#e2e8f0 !important;}
+  [class*="bg-slate-950"]{background-color:#ffffff !important;}
+  [class*="bg-slate-900"]{background-color:#f8fafc !important;}
+  [class*="bg-slate-800"]{background-color:#e2e8f0 !important;}
+  [class*="border-slate-800"],[class*="border-slate-700"]{border-color:#e2e8f0 !important;}
+  [class*="text-white"]{color:#1e293b !important;}
+  [class*="text-slate-300"]{color:#475569 !important;}
+  [class*="text-slate-400"]{color:#64748b !important;}
+  [class*="text-slate-500"]{color:#94a3b8 !important;}
+  [class*="text-emerald-300"],[class*="text-emerald-400"]{color:#059669 !important;}
+  [class*="text-cyan-300"]{color:#0891b2 !important;}
+  [class*="text-indigo-300"],[class*="text-indigo-200"]{color:#4f46e5 !important;}
+  [class*="text-amber-300"]{color:#d97706 !important;}
+  [class*="text-rose-300"],[class*="text-rose-400"]{color:#e11d48 !important;}
+  [class*="text-fuchsia-300"]{color:#c026d3 !important;}
+  [class*="text-blue-300"]{color:#2563eb !important;}
+  [class*="text-purple-300"]{color:#7c3aed !important;}
+  [class*="text-violet-300"],[class*="text-violet-200"]{color:#8b5cf6 !important;}
+  [class*="bg-violet-500\/3"]{background-color:rgba(139,92,246,.08) !important;}
+  [class*="bg-violet-500\/2"]{background-color:rgba(139,92,246,.06) !important;}
+  [class*="bg-violet-500\/1"]{background-color:rgba(139,92,246,.06) !important;}
+  [class*="bg-indigo-500\/3"]{background-color:rgba(139,92,246,.08) !important;}
+  [class*="bg-indigo-500\/2"]{background-color:rgba(139,92,246,.06) !important;}
+  [class*="bg-indigo-500\/1"]{background-color:rgba(139,92,246,.06) !important;}
+  [class*="bg-rose-500\/1"]{background-color:rgba(244,63,94,.06) !important;}
+  [class*="bg-amber-500\/1"]{background-color:rgba(245,158,11,.08) !important;}
+  [class*="bg-emerald-500\/1"]{background-color:rgba(16,185,129,.06) !important;}
+  [class*="border-rose-500"]{border-color:#fecaca !important;}
+  [class*="border-amber-500"]{border-color:#fde68a !important;}
+  [class*="border-indigo-500"],[class*="border-indigo-400"]{border-color:#ddd6fe !important;}
+  [class*="border-emerald-500"]{border-color:#a7f3d0 !important;}
+  [class*="border-cyan-500"]{border-color:#a5f3fc !important;}
+  [class*="bg-gradient-to-br"]{opacity:0.9;}
+  .filter-type,.filter-genre,.filter-struct,.time-tab{transition:all .15s;}
+  .sidebar .nav-link.active{background:rgba(139,92,246,.15) !important;color:#8b5cf6 !important;border-left:3px solid #8b5cf6;}
+  .sidebar .nav-link:hover{color:#e2e8f0 !important;background:rgba(255,255,255,.05) !important;}
+</style>
+</head>
+<body class="min-h-screen flex">
+
+<!-- Sidebar -->
+<aside class="w-60 shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col">
+  <div class="p-5 border-b border-slate-800 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white">OC</div>
+    <div><div class="text-sm font-semibold">素材中台</div><div class="text-[11px] text-slate-500">投放管理中台</div></div>
+  </div>
+  <nav class="sidebar px-3 space-y-1 flex-1">
+    <a href="index.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">首页</a>
+    <a href="boss.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">管理者素材一览</a>
+    <a href="optimizer-team-lead.html" class="nav-link active px-3 py-2 rounded-lg text-xs font-medium">优化团队负责人素材盯盘</a>
+    <a href="team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化组长素材盯盘</a>
+    <a href="optimizer.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化师素材盯盘</a>
+    <a href="material-team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材团队负责人素材盯盘</a>
+    <a href="material-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材组长工作台</a>
+    <a href="designer.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材师工作台</a>
+    <a href="admin.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">系统管理员监控平台</a>
+  </nav>
+  <div class="p-4 border-t border-slate-800 flex items-center gap-3">
+    <div class="w-8 h-8 rounded-full bg-violet-500/30 flex items-center justify-center text-sm">🎯</div>
+    <div><div class="text-sm">林优</div><div class="text-[11px] text-slate-500">优化师 · 总负责人</div></div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 overflow-x-hidden">
+  <header class="px-8 py-4 flex items-center justify-between border-b border-slate-800/70">
+    <div>
+      <div class="text-xs text-slate-500">投放管理中台 · 5 个投放团队 · 32 名优化师</div>
+      <h1 class="text-xl font-semibold mt-0.5">投放团队管理中台</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="px-3 py-1.5 text-xs bg-violet-100 hover:bg-violet-200 text-violet-700 border border-violet-200 rounded-lg" onclick="exportReport()">📤 导出报表</button>
+      <button class="px-3 py-1.5 text-xs bg-violet-100 hover:bg-violet-200 text-violet-700 border border-violet-200 rounded-lg" onclick="savePDF()" title="该操作为页面快照，请确认您要看的数据信息全部展开，再执行该操作">📄 保存页面为PDF</button>
+    </div>
+  </header>
+
+  <!-- 时间维度切换 + KPI -->
+  <section class="px-8 pt-6">
+    <!-- 时间维度 Tab -->
+    <div class="flex items-center mb-4" style="gap:18px">
+      <div class="flex bg-slate-900/80 border border-slate-800 rounded-xl p-1 gap-0.5" id="timeTabs">
+        <button onclick="switchTime('today')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all bg-violet-500/30 text-violet-700 border border-violet-400/40" data-tab="today">今日</button>
+        <button onclick="switchTime('week')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="week">本周</button>
+        <button onclick="switchTime('month')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="month">本月</button>
+        <button onclick="switchTime('year')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="year">年度</button>
+        <button onclick="switchTime('custom')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="custom">自定义</button>
+      </div>
+      <div class="flex bg-slate-900/80 border border-slate-800 rounded-lg p-0.5 gap-0.5" id="mediaTabs">
+        <button onclick="switchMedia('all')" class="media-tab px-3 py-1.5 rounded text-xs font-medium bg-violet-500/30 text-violet-700 border border-violet-400/40" data-tab="all">全部</button>
+        <button onclick="switchMedia('toutiao')" class="media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="toutiao">头条</button>
+        <button onclick="switchMedia('guangdiantong')" class="media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="guangdiantong">广点通</button>
+        <button onclick="switchMedia('kuaishou')" class="media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="kuaishou">快手</button>
+      </div>
+      <div class="flex bg-slate-900/80 border border-slate-800 rounded-lg p-0.5 gap-0.5" id="typeTabs">
+        <button onclick="switchType('all')" class="type-tab px-3 py-1.5 rounded text-xs font-medium bg-violet-500/30 text-violet-700 border border-violet-400/40" data-tab="all">全部</button>
+        <button onclick="switchType('drama')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="drama">短剧</button>
+        <button onclick="switchType('novel')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="novel">小说</button>
+      </div>
+      <select id="bizSelect" onchange="switchBiz(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500 max-w-[160px]">
+        <option value="all">全部</option>
+        <option value="客户端-小说付费">客户端-小说付费</option>
+      </select>
+      <div class="flex items-center gap-2 ml-auto">
+        <div id="customRange" class="hidden items-center gap-2">
+          <input type="date" value="2026-05-01" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300">
+          <span class="text-slate-500 text-xs">至</span>
+          <input type="date" value="2026-05-23" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300">
+          <button class="px-2 py-1 bg-violet-500 rounded text-xs text-white">查询</button>
+        </div>
+        <div class="text-xs text-slate-500" id="timeLabel">2026-05-23 · 截至当前时刻</div>
+      </div>
+    </div>
+
+    <!-- KPI 面板 -->
+    <div class="grid grid-cols-4 gap-4" id="kpiPanel">
+      <!-- 由 JS 动态渲染 -->
+    </div>
+  </section>
+
+  <!-- 分类筛选 -->
+  <section class="px-8 pt-4">
+    <div class="flex items-center gap-6 flex-wrap">
+      <div class="ml-auto text-[11px] text-slate-500" id="filterStatus">当前：全部</div>
+    </div>
+  </section>
+
+  <!-- 图表区：各团队消耗对比 + 饼图+漏斗 -->
+  <section class="px-8 pt-6 grid grid-cols-2 gap-4">
+    <!-- 左：各团队消耗对比 -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">各团队消耗对比</div>
+        <div class="flex items-center gap-1.5">
+          <div class="flex gap-0.5" id="leadTimeTabs">
+            <button onclick="switchLeadTime('today')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-leadtime="today">当日</button>
+            <button onclick="switchLeadTime('week')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-leadtime="week">本周</button>
+            <button onclick="switchLeadTime('14d')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium bg-violet-500/20 text-violet-600 border border-violet-400/30" data-leadtime="14d">14日</button>
+            <button onclick="switchLeadTime('month')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-leadtime="month">当月</button>
+          </div>
+        </div>
+      </div>
+      <canvas id="adTrendChart" height="200"></canvas>
+    </div>
+    <!-- 右：消耗占比饼图 -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm font-semibold">消耗占比</div>
+        <div class="flex items-center gap-1.5">
+          <div class="flex gap-0.5" id="pieTypeTabs">
+            <button onclick="switchPieView('team')" class="px-2 py-0.5 rounded text-[10px] font-medium bg-violet-500/20 text-violet-600 border border-violet-400/30" data-pieview="team">团队</button>
+            <button onclick="switchPieView('genre')" class="px-2 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white" data-pieview="genre">题材</button>
+            <button onclick="switchPieView('struct')" class="px-2 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white" data-pieview="struct">结构类型</button>
+          </div>
+        </div>
+      </div>
+      <canvas id="pieChart" height="120"></canvas>
+    </div>
+  </section>
+
+  <!-- 素材使用漏斗 + 全局预警与建议 -->
+  <section class="px-8 pt-4 grid grid-cols-2 gap-4">
+    <!-- 素材使用漏斗 -->
+    <div class="card p-5">
+      <div class="text-sm font-semibold mb-3">素材使用漏斗 <span class="text-xs text-slate-400 font-normal">（本期不做）</span></div>
+      <div class="space-y-1.5">
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span>素材领取</span><span class="text-slate-400">348</span></div>
+          <div class="h-5 rounded bg-violet-500/70 flex items-center px-3 text-xs text-white">100%</div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span>上跑计划</span><span class="text-slate-400">268</span></div>
+          <div class="h-5 rounded bg-violet-500/60 flex items-center px-3 text-xs text-white" style="width:77%">77.0%</div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span>有效消耗（≥¥500）</span><span class="text-slate-400">198</span></div>
+          <div class="h-5 rounded bg-violet-500/50 flex items-center px-3 text-xs text-white" style="width:57%">56.9%</div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span>跑量素材（≥¥5000）</span><span class="text-slate-400">112</span></div>
+          <div class="h-5 rounded bg-amber-500/60 flex items-center px-3 text-xs text-white" style="width:32%">32.2%</div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-1"><span>爆款素材（S+A）</span><span class="text-slate-400">24</span></div>
+          <div class="h-5 rounded bg-amber-400/80 flex items-center px-3 text-xs text-slate-900 font-semibold" style="width:8%">6.9%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全局预警与建议 -->
+    <div class="card p-5">
+      <div class="text-sm font-semibold mb-3">全局预警与建议 <span class="text-xs text-slate-400 font-normal">（本期不做）</span></div>
+      <div class="space-y-3">
+        <div class="rounded-lg p-3 bg-rose-500/10 border border-rose-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">📉 E 团队 ROI 连续 5 日 &lt; 1.40</div><span class="pill grade-D">高危</span></div>
+          <div class="text-xs text-slate-500 mt-1">消耗环比下降 18%，建议安排 A 团队骨干进行选材分享，已为其推荐 8 条 S/A 素材</div>
+        </div>
+        <div class="rounded-lg p-3 bg-amber-500/10 border border-amber-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">⚠️ 战神赛道库存 86 条未上跑</div><span class="pill grade-A">中危</span></div>
+          <div class="text-xs text-slate-500 mt-1">该题材历史 ROI 1.52，建议优先安排 C/D 团队消化</div>
+        </div>
+        <div class="rounded-lg p-3 bg-violet-500/10 border border-violet-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">💡 系统识别 12 条"高潜未跑"素材</div><span class="pill grade-B">建议</span></div>
+          <div class="text-xs text-slate-500 mt-1">预计首日 ROI ≥ 1.6，建议今日内排入各团队计划</div>
+        </div>
+        <div class="rounded-lg p-3 bg-emerald-500/10 border border-emerald-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">🏆 A 团队 · 连续 4 周 S 级</div><span class="pill grade-S">荣誉</span></div>
+          <div class="text-xs text-slate-500 mt-1">广告创建 156 条 / ROI 1.68，为全局标杆，建议组织经验分享会</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 各团队排行（全宽） -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">各投放团队排行</div>
+        <div class="text-xs text-slate-500">点击团队名查看团队详情</div>
+      </div>
+      <table>
+        <thead><tr><th class="w-6"></th><th>投放团队</th><th>优化师数</th><th>广告创建数</th><th>消耗</th><th>ROI</th><th>爆款数(S+A) <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+        <tbody>
+          <tr class="team-row cursor-pointer" onclick="toggleTeamRow('team-a')">
+            <td><span class="team-arrow">▶</span></td>
+            <td>🔷 A 团队（张浩）</td><td>8</td><td>156</td><td>¥24.8万</td><td>1.68</td><td>18</td><td><span class="pill grade-S">S</span></td>
+          </tr>
+          <tr id="team-a" class="team-detail hidden"><td colspan="8">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th>优化师</th><th>广告创建数</th><th>消耗</th><th>ROI</th><th>爆款数(S+A) <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+                <tbody>
+                  <tr><td class="font-medium text-slate-700">韩雪</td><td>28</td><td>¥4.8万</td><td>1.82</td><td>4</td><td><span class="pill grade-S">S</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">陈思远</td><td>24</td><td>¥4.2万</td><td>1.76</td><td>3</td><td><span class="pill grade-S">S</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">李婷婷</td><td>22</td><td>¥3.8万</td><td>1.72</td><td>3</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">王磊</td><td>20</td><td>¥3.4万</td><td>1.68</td><td>3</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">张雨晴</td><td>18</td><td>¥3.0万</td><td>1.64</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">刘洋</td><td>16</td><td>¥2.6万</td><td>1.58</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">黄磊</td><td>14</td><td>¥2.2万</td><td>1.52</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">孙涛</td><td>14</td><td>¥2.0万</td><td>1.48</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr class="team-row cursor-pointer" onclick="toggleTeamRow('team-b')">
+            <td><span class="team-arrow">▶</span></td>
+            <td>🔶 B 团队（李娜）</td><td>7</td><td>142</td><td>¥21.6万</td><td>1.62</td><td>15</td><td><span class="pill grade-S">S</span></td>
+          </tr>
+          <tr id="team-b" class="team-detail hidden"><td colspan="8">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th>优化师</th><th>广告创建数</th><th>消耗</th><th>ROI</th><th>爆款数(S+A) <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+                <tbody>
+                  <tr><td class="font-medium text-slate-700">周婷</td><td>26</td><td>¥4.2万</td><td>1.78</td><td>3</td><td><span class="pill grade-S">S</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">林小雨</td><td>24</td><td>¥3.8万</td><td>1.72</td><td>3</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">赵明</td><td>22</td><td>¥3.4万</td><td>1.66</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">吴芳</td><td>20</td><td>¥3.2万</td><td>1.60</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">郑凯</td><td>18</td><td>¥2.8万</td><td>1.56</td><td>2</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">杨雪</td><td>16</td><td>¥2.4万</td><td>1.50</td><td>2</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">马超</td><td>16</td><td>¥2.0万</td><td>1.44</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr class="team-row cursor-pointer" onclick="toggleTeamRow('team-c')">
+            <td><span class="team-arrow">▶</span></td>
+            <td>🟡 C 团队（王强）</td><td>6</td><td>128</td><td>¥18.2万</td><td>1.55</td><td>12</td><td><span class="pill grade-A">A</span></td>
+          </tr>
+          <tr id="team-c" class="team-detail hidden"><td colspan="8">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th>优化师</th><th>广告创建数</th><th>消耗</th><th>ROI</th><th>爆款数(S+A) <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+                <tbody>
+                  <tr><td class="font-medium text-slate-700">何平</td><td>26</td><td>¥4.0万</td><td>1.72</td><td>3</td><td><span class="pill grade-S">S</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">谢文</td><td>24</td><td>¥3.6万</td><td>1.64</td><td>3</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">徐静</td><td>22</td><td>¥3.2万</td><td>1.58</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">罗斌</td><td>20</td><td>¥2.8万</td><td>1.52</td><td>2</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">邓丽</td><td>18</td><td>¥2.4万</td><td>1.46</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">冯刚</td><td>18</td><td>¥2.2万</td><td>1.42</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr class="team-row cursor-pointer" onclick="toggleTeamRow('team-d')">
+            <td><span class="team-arrow">▶</span></td>
+            <td>🩷 D 团队（陈敏）</td><td>6</td><td>118</td><td>¥14.6万</td><td>1.48</td><td>9</td><td><span class="pill grade-A">A</span></td>
+          </tr>
+          <tr id="team-d" class="team-detail hidden"><td colspan="8">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th>优化师</th><th>广告创建数</th><th>消耗</th><th>ROI</th><th>爆款数(S+A) <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+                <tbody>
+                  <tr><td class="font-medium text-slate-700">曹亮</td><td>24</td><td>¥3.6万</td><td>1.62</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">田甜</td><td>22</td><td>¥3.0万</td><td>1.54</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">宋涛</td><td>20</td><td>¥2.6万</td><td>1.48</td><td>2</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">贾琳</td><td>18</td><td>¥2.2万</td><td>1.42</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">丁一</td><td>18</td><td>¥1.8万</td><td>1.36</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">姚远</td><td>16</td><td>¥1.4万</td><td>1.28</td><td>1</td><td><span class="pill grade-C">C</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr class="team-row cursor-pointer" onclick="toggleTeamRow('team-e')">
+            <td><span class="team-arrow">▶</span></td>
+            <td>🟢 E 团队（刘洋）</td><td>5</td><td>98</td><td>¥11.2万</td><td>1.38</td><td>6</td><td><span class="pill grade-B">B</span></td>
+          </tr>
+          <tr id="team-e" class="team-detail hidden"><td colspan="8">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th>优化师</th><th>广告创建数</th><th>消耗</th><th>ROI</th><th>爆款数(S+A) <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+                <tbody>
+                  <tr><td class="font-medium text-slate-700">陆飞</td><td>24</td><td>¥3.2万</td><td>1.52</td><td>2</td><td><span class="pill grade-A">A</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">任欣</td><td>22</td><td>¥2.6万</td><td>1.44</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">范强</td><td>20</td><td>¥2.2万</td><td>1.38</td><td>1</td><td><span class="pill grade-B">B</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">彭丹</td><td>16</td><td>¥1.8万</td><td>1.30</td><td>1</td><td><span class="pill grade-C">C</span></td></tr>
+                  <tr><td class="font-medium text-slate-700">董伟</td><td>16</td><td>¥1.4万</td><td>1.22</td><td>1</td><td><span class="pill grade-C">C</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 团队在跑素材 -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">团队在跑素材</div>
+        <div class="text-xs text-slate-500">各团队在跑素材汇总 · 每 15 分钟刷新</div>
+      </div>
+      <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex-wrap">
+        <span class="text-xs font-medium text-slate-600 shrink-0">素材名称：</span>
+        <input type="text" id="otlTeamRunMaterialName" placeholder="输入素材名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">剧名/小说名：</span>
+        <input type="text" id="otlTeamRunWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">投放团队：</span>
+        <input type="text" id="otlTeamRunTeamName" placeholder="输入团队名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-28 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">消耗范围：</span>
+        <input type="number" id="otlTeamRunCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="otlTeamRunCostMax" placeholder="最大消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <button class="px-4 py-1 text-xs rounded bg-violet-500 text-white font-semibold hover:bg-violet-400 ml-auto" onclick="filterOtlTeamRun()">查询</button>
+        <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetOtlTeamRun()">重置</button>
+      </div>
+      <table>
+        <thead><tr><th>素材</th><th>所属作品</th><th>类型</th><th>投放团队</th><th>优化师</th><th>计划数</th><th>累计消耗</th><th>展示数</th><th>点击数</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>分时消耗</th><th>是否为优质 <span class="inline-block w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[9px] font-bold leading-[14px] text-center cursor-help" title="是否为大盘优质素材">?</span></th><th>生产类别</th><th>结构类型</th><th>状态 <span class="text-[10px] text-slate-400 font-normal">（本期不做"状态"）</span></th></tr></thead>
+        <tbody>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-700"></div><span>都市重生 #2841</span></div></td>
+            <td class="text-slate-600">都市重生录</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td class="text-slate-600">A 团队</td>
+            <td class="text-slate-600">韩雪</td>
+            <td>12</td><td>¥42,680</td><td>735,862</td><td>42,680</td><td>5.8%</td><td>78%</td><td>2.18</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-rose-500 to-pink-700"></div><span>古言王爷 V3</span></div></td>
+            <td class="text-slate-600">冷面王爷</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td class="text-slate-600">B 团队</td>
+            <td class="text-slate-600">周婷</td>
+            <td>10</td><td>¥38,420</td><td>784,082</td><td>38,420</td><td>4.9%</td><td>72%</td><td>1.92</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-700 text-[10px]">起量</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-amber-500 to-orange-700"></div><span>战神短挂 V6</span></div></td>
+            <td class="text-slate-600">战神归来</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td class="text-slate-600">A 团队</td>
+            <td class="text-slate-600">赵明</td>
+            <td>8</td><td>¥28,180</td><td>687,317</td><td>28,180</td><td>4.1%</td><td>64%</td><td>1.62</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-sky-700"></div><span>豪门替嫁 V2</span></div></td>
+            <td class="text-slate-600">豪门替嫁</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td class="text-slate-600">C 团队</td>
+            <td class="text-slate-600">林小雨</td>
+            <td>6</td><td>¥18,340</td><td>573,125</td><td>18,340</td><td>3.2%</td><td>52%</td><td>1.18</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 text-[10px]">衰退</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-fuchsia-500 to-purple-700"></div><span>悬疑追凶 V1</span></div></td>
+            <td class="text-slate-600">悬疑追凶</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td class="text-slate-600">D 团队</td>
+            <td class="text-slate-600">吴芳</td>
+            <td>4</td><td>¥8,820</td><td>420,000</td><td>8,820</td><td>2.1%</td><td>38%</td><td>0.82</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-700 text-[10px]">归档</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-teal-700"></div><span>玄幻逆袭 V4</span></div></td>
+            <td class="text-slate-600">玄幻逆袭</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td class="text-slate-600">E 团队</td>
+            <td class="text-slate-600">郑凯</td>
+            <td>9</td><td>¥32,150</td><td>652,800</td><td>32,150</td><td>4.9%</td><td>70%</td><td>1.86</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片剪辑</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-sky-500 to-blue-700"></div><span>修仙之路 V2</span></div></td>
+            <td class="text-slate-600">修仙逆天</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td class="text-slate-600">B 团队</td>
+            <td class="text-slate-600">杨雪</td>
+            <td>7</td><td>¥22,460</td><td>548,000</td><td>22,460</td><td>4.1%</td><td>62%</td><td>1.54</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">解说</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-700 text-[10px]">起量</span></td>
+          </tr>
+          <tr class="otl-team-run-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-orange-500 to-red-700"></div><span>霸总回归 V5</span></div></td>
+            <td class="text-slate-600">霸总归来</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td class="text-slate-600">C 团队</td>
+            <td class="text-slate-600">马超</td>
+            <td>5</td><td>¥15,280</td><td>486,200</td><td>15,280</td><td>3.1%</td><td>48%</td><td>1.28</td>
+            <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 text-[10px] border border-orange-200">广播剧</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 text-[10px]">衰退</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+        <span class="text-xs text-slate-500">共 <span class="font-semibold text-slate-700">42</span> 条 · 每页 <span class="font-semibold text-slate-700">10</span> 条</span>
+        <div class="flex items-center gap-1">
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 border border-slate-200" disabled>‹</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs font-medium bg-violet-500 text-white">1</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">2</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">3</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">4</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">5</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 大盘优质素材 -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm font-semibold flex items-center gap-2">🔥 大盘优质素材 <span class="pill grade-A">Hot</span></div>
+          <div class="text-xs text-slate-500 mt-1">全平台高消耗素材明细，按累计消耗倒序排列</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex gap-3 text-xs">
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">作品总数</span><span class="font-semibold text-slate-700">68</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">素材总数</span><span class="font-semibold text-slate-700">86</span></div>
+          </div>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:text-violet-500 hover:bg-violet-50 border border-slate-200 transition-colors" title="刷新">↻</button>
+          <button onclick="toggleSection('otlTopBody',this)" class="w-6 h-6 flex items-center justify-center rounded text-xs text-slate-400 hover:text-violet-500 border border-slate-200" title="折叠/展开">▲</button>
+        </div>
+      </div>
+      <div id="otlTopBody">
+      <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
+        <span class="text-xs font-medium text-slate-600 shrink-0">素材名称：</span>
+        <input type="text" id="otlTopMaterialName" placeholder="输入素材名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-32 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">消耗范围：</span>
+        <input type="number" id="otlTopCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="otlTopCostMax" placeholder="最大消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">所属作品：</span>
+        <input type="text" id="otlTopWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-violet-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">结构类型：</span>
+        <select id="otlTopStructFilter" class="px-2 py-1 text-xs rounded border border-slate-300 w-28 focus:outline-none focus:ring-1 focus:ring-violet-500">
+          <option value="">全部</option>
+          <option value="迭代素材">迭代素材</option>
+          <option value="原片素材">原片素材</option>
+          <option value="滚屏">滚屏</option>
+          <option value="解压">解压</option>
+        </select>
+        <button class="px-4 py-1 text-xs rounded bg-violet-500 text-white font-semibold hover:bg-violet-400 ml-auto" onclick="filterOtlTopMaterials()">查询</button>
+        <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetOtlTopFilter()">重置</button>
+      </div>
+      <table>
+        <thead><tr><th>缩略图</th><th>素材名</th><th>所属作品</th><th>类型</th><th>题材</th><th>素材师</th><th>生产类别</th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（评级本期不做）</span></th><th>总广告</th><th>累计消耗</th><th>分天消耗</th><th>分时消耗</th><th>展示数</th><th>点击数</th><th>转化数</th><th>结构类型</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th></tr></thead>
+        <tbody>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-violet-400 to-indigo-600"></div></td>
+            <td class="font-medium text-slate-700">钩子 V12</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">陈思远</td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td>
+            <td>156</td><td>¥12,800</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>130,446</td><td>7,062</td><td>326</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border-blue-200 text-[10px] border">迭代素材</span></td><td>5.8%</td><td>78%</td><td>2.12</td><td>3.4%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-blue-600"></div></td>
+            <td class="font-medium text-slate-700">爽点剪辑 V8</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">张雨晴</td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-S">S</span></td>
+            <td>128</td><td>¥11,200</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>190,693</td><td>13,689</td><td>453</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">原片素材</span></td><td>5.4%</td><td>74%</td><td>2.02</td><td>3.2%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td>
+            <td class="font-medium text-slate-700">V6 虐恋版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">林小曼</td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-S">S</span></td>
+            <td>112</td><td>¥10,800</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>222,874</td><td>14,943</td><td>627</td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border-amber-200 text-[10px] border">口播网赚</span></td><td>5.2%</td><td>72%</td><td>1.98</td><td>3.1%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-cyan-600"></div></td>
+            <td class="font-medium text-slate-700">反转开场 V6</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">陈思远</td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td>
+            <td>96</td><td>¥9,600</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>77,826</td><td>7,386</td><td>274</td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 border-cyan-200 text-[10px] border">滚屏</span></td><td>5.0%</td><td>70%</td><td>1.88</td><td>3.0%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td>
+            <td class="font-medium text-slate-700">V5 甜宠版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">张雨晴</td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-S">S</span></td>
+            <td>96</td><td>¥9,400</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>180,805</td><td>13,382</td><td>598</td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 border-pink-200 text-[10px] border">解压</span></td><td>4.8%</td><td>68%</td><td>1.86</td><td>2.9%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td>
+            <td class="font-medium text-slate-700">短挂 V10</td>
+            <td><span class="text-slate-600">战神归来</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>战神</td>
+            <td class="text-slate-500">王大明</td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td>
+            <td>98</td><td>¥8,600</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>83,044</td><td>4,745</td><td>253</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border-blue-200 text-[10px] border">迭代素材</span></td><td>4.8%</td><td>66%</td><td>1.86</td><td>2.9%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-indigo-500"></div></td>
+            <td class="font-medium text-slate-700">情感线 V4</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">林小曼</td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td>
+            <td>72</td><td>¥8,200</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>208,838</td><td>14,486</td><td>561</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">原片素材</span></td><td>4.6%</td><td>64%</td><td>1.76</td><td>2.8%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td>
+            <td class="font-medium text-slate-700">V4 反转版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">陈思远</td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-S">S</span></td>
+            <td>78</td><td>¥8,200</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>87,704</td><td>5,994</td><td>364</td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border-amber-200 text-[10px] border">口播网赚</span></td><td>4.4%</td><td>62%</td><td>1.74</td><td>2.7%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td>
+            <td class="font-medium text-slate-700">新版 V5</td>
+            <td><span class="text-slate-600">玄幻逆袭</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>玄幻</td>
+            <td class="text-slate-500">张雨晴</td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-A">A</span></td>
+            <td>86</td><td>¥8,400</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>142,231</td><td>7,293</td><td>312</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border-blue-200 text-[10px] border">迭代素材</span></td><td>4.8%</td><td>60%</td><td>1.82</td><td>2.9%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-purple-400 to-rose-600"></div></td>
+            <td class="font-medium text-slate-700">V3 初见版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">王大明</td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td>
+            <td>52</td><td>¥7,800</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>103,540</td><td>9,566</td><td>416</td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 border-cyan-200 text-[10px] border">滚屏</span></td><td>4.0%</td><td>56%</td><td>1.62</td><td>2.5%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td>
+            <td class="font-medium text-slate-700">开服版 V4</td>
+            <td><span class="text-slate-600">玄幻逆袭</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>玄幻</td>
+            <td class="text-slate-500">林小曼</td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td>
+            <td>64</td><td>¥7,600</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>74,116</td><td>6,128</td><td>222</td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 border-pink-200 text-[10px] border">解压</span></td><td>4.4%</td><td>54%</td><td>1.68</td><td>2.6%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td>
+            <td class="font-medium text-slate-700">高燃 V8</td>
+            <td><span class="text-slate-600">战神归来</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>战神</td>
+            <td class="text-slate-500">陈思远</td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-A">A</span></td>
+            <td>76</td><td>¥7,400</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>96,540</td><td>9,039</td><td>339</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border-blue-200 text-[10px] border">迭代素材</span></td><td>4.4%</td><td>52%</td><td>1.72</td><td>2.7%</td></tr>
+          <tr class="otl-top-row">
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-300 to-violet-500"></div></td>
+            <td class="font-medium text-slate-700">金手指 V3</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">张雨晴</td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-S">S</span></td>
+            <td>54</td><td>¥6,800</td><td><button onclick="showOtlDailyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时消耗">📈</button></td><td>247,728</td><td>15,727</td><td>612</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">原片素材</span></td><td>4.2%</td><td>50%</td><td>1.68</td><td>2.6%</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 折线图弹窗 -->
+  <div id="otlChartDialog" class="fixed inset-0 bg-black/40 z-50 hidden items-center justify-center" onclick="if(event.target===this)closeOtlChartDialog()">
+    <div class="bg-white rounded-xl shadow-2xl w-[640px] p-5 relative">
+      <button onclick="closeOtlChartDialog()" class="absolute top-3 right-3 w-7 h-7 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 text-lg">×</button>
+      <div class="text-sm font-semibold mb-1" id="otlChartDialogTitle">分时消耗</div>
+      <div class="text-xs text-slate-500 mb-4" id="otlChartDialogSub">—</div>
+      <div style="height:300px"><canvas id="otlChartDialogCanvas"></canvas></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ====== 导出报表 & 保存PDF ======
+function exportReport(){ alert('正在导出报表，请稍候...'); }
+function savePDF(){
+  const btn = event.currentTarget;
+  btn.disabled = true; btn.textContent = '⏳ 生成中...';
+  const main = document.querySelector('main') || document.body;
+  html2canvas(main, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+    const { jsPDF } = window.jspdf;
+    const imgW = canvas.width, imgH = canvas.height;
+    const pdfW = 595.28, pdfH = pdfW * imgH / imgW;
+    const pdf = new jsPDF({ orientation: imgH > imgW ? 'p' : 'l', unit: 'pt', format: [pdfW, pdfH] });
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
+    pdf.save(document.title.replace(/[·\s]+/g, '_') + '.pdf');
+  }).finally(() => { btn.disabled = false; btn.textContent = '📄 保存页面为PDF'; });
+}
+
+// ====== 分类筛选逻辑 ======
+function switchFilter(dim,val,btn){
+  const clsMap={type:'filter-type',genre:'filter-genre',struct:'filter-struct'};
+  const cls=clsMap[dim]||'filter-type';
+  const activeStyle='px-3 py-1.5 rounded text-xs font-medium bg-violet-500/30 text-violet-700 border border-violet-400/40';
+  const inactiveStyle='px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
+  document.querySelectorAll('.'+cls).forEach(b=>b.className=cls+' '+inactiveStyle);
+  btn.className=cls+' '+activeStyle;
+  const typeEl=document.querySelector('.filter-type[class*="bg-violet"]');
+  const genreEl=document.querySelector('.filter-genre[class*="bg-violet"]');
+  const structEl=document.querySelector('.filter-struct[class*="bg-violet"]');
+  document.getElementById('filterStatus').textContent='当前：'+(typeEl?typeEl.textContent:'全部')+' · '+(genreEl?genreEl.textContent:'全部')+' · '+(structEl?structEl.textContent:'全部结构类型');
+}
+
+// ====== 时间维度切换逻辑 ======
+const kpiData = {
+  today: {
+    label: '2026-05-23 · 截至当前时刻',
+    items: [
+      { title: '全局消耗', value: '¥86.4万', change: '▲15% vs 昨日 ¥75.2万', positive: true, yVal: '昨日 ¥75.2万' },
+      { title: '全局 ROI', value: '1.54', change: '▲4.1% vs 昨日 1.48', positive: true, yVal: '昨日 1.48' },
+      { title: '领取素材数', value: '348', change: '▲12.6% vs 昨日 309', positive: true, yVal: '昨日 309' },
+      { title: '广告创建数', value: '642', change: '▲12.3% vs 昨日 572', positive: true, yVal: '昨日 572' }
+    ]
+  },
+  week: {
+    label: '2026-05-19 ~ 05-23 · 本周累计',
+    items: [
+      { title: '全局消耗', value: '¥528万', change: '▲16% vs 上周 ¥455万', positive: true },
+      { title: '全局 ROI', value: '1.52', change: '▲0.08 vs 上周 1.44', positive: true },
+      { title: '领取素材数', value: '1,842', change: '▲15.3% vs 上周 1,598', positive: true },
+      { title: '广告创建数', value: '4,286', change: '▲13.5% vs 上周 3,776', positive: true }
+    ]
+  },
+  month: {
+    label: '2026-05-01 ~ 05-23 · 本月累计',
+    items: [
+      { title: '全局消耗', value: '¥1,968万', change: '▲20% vs 上月同期 ¥1,640万', positive: true },
+      { title: '全局 ROI', value: '1.48', change: '▲0.10 vs 上月 1.38', positive: true },
+      { title: '领取素材数', value: '7,286', change: '▲18.6% vs 上月 6,142', positive: true },
+      { title: '广告创建数', value: '13,640', change: '▲18.2% vs 上月 11,540', positive: true }
+    ]
+  },
+  year: {
+    label: '2026-01-01 ~ 05-23 · 年度累计',
+    items: [
+      { title: '全局消耗', value: '¥8,860万', change: '完成年目标 52.1%', positive: null },
+      { title: '全局 ROI', value: '1.42', change: '▲0.14 vs 去年同期 1.28', positive: true },
+      { title: '领取素材数', value: '38,420', change: '▲24.8% vs 去年同期 30,786', positive: true },
+      { title: '广告创建数', value: '62,480', change: '▲22.6% vs 去年同期 50,960', positive: true }
+    ]
+  },
+  custom: {
+    label: '自定义日期范围',
+    items: [
+      { title: '区间消耗', value: '—', change: '选择日期后加载', positive: null },
+      { title: '区间 ROI', value: '—', change: '选择日期后加载', positive: null },
+      { title: '领取素材数', value: '—', change: '选择日期后加载', positive: null },
+      { title: '广告创建数', value: '—', change: '选择日期后加载', positive: null }
+    ]
+  }
+};
+
+function renderKPI(period) {
+  const data = kpiData[period];
+  document.getElementById('timeLabel').textContent = data.label;
+  document.getElementById('customRange').style.display = period==='custom'?'flex':'none';
+  const panel = document.getElementById('kpiPanel');
+  panel.innerHTML = data.items.map(item => {
+    const changeColor = item.positive === true ? 'text-emerald-500' : item.positive === false ? 'text-rose-500' : 'text-slate-400';
+    const yLine = item.yVal ? `<div class="text-[10px] text-slate-400 mt-0.5">${item.yVal} · <span class="${changeColor}">${item.change}</span></div>` : `<div class="text-[11px] ${changeColor} mt-1">${item.change}</div>`;
+    return `<div class="card kpi p-4">
+      <div class="text-[11px] text-slate-400">${item.title}</div>
+      <div class="text-2xl font-bold mt-1">${item.value}</div>
+      ${yLine}
+    </div>`;
+  }).join('');
+}
+
+function switchTime(period) {
+  document.querySelectorAll('.time-tab').forEach(btn => {
+    if (btn.dataset.tab === period) {
+      btn.className = 'time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all bg-violet-500/30 text-violet-700 border border-violet-400/40';
+    } else {
+      btn.className = 'time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white';
+    }
+  });
+  renderKPI(period);
+}
+
+// 初始化
+renderKPI('today');
+
+// ====== 广告创建趋势图 ======
+const adTrendData = {
+  today: { labels: ['A团队','B团队','C团队','D团队','E团队'], data: [24.8, 21.6, 18.2, 14.6, 11.2], bg: ['#8b5cf6','#a78bfa','#c4b5fd','#ddd6fe','#ede9fe'] },
+  week: { labels: ['A团队','B团队','C团队','D团队','E团队'], data: [142, 126, 108, 88, 68], bg: ['#8b5cf6','#a78bfa','#c4b5fd','#ddd6fe','#ede9fe'] },
+  '14d': { labels: ['A团队','B团队','C团队','D团队','E团队'], data: [286, 248, 210, 172, 134], bg: ['#8b5cf6','#a78bfa','#c4b5fd','#ddd6fe','#ede9fe'] },
+  month: { labels: ['A团队','B团队','C团队','D团队','E团队'], data: [682, 598, 512, 426, 338], bg: ['#8b5cf6','#a78bfa','#c4b5fd','#ddd6fe','#ede9fe'] }
+};
+
+let adTrendChart;
+function initAdTrendChart(period) {
+  const d = adTrendData[period] || adTrendData['14d'];
+  if (adTrendChart) adTrendChart.destroy();
+  adTrendChart = new Chart(document.getElementById('adTrendChart'), {
+    type: 'bar',
+    data: {
+      labels: d.labels,
+      datasets: [{ label: '消耗(万)', data: d.data, backgroundColor: d.bg, borderRadius: 6 }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
+        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(148,163,184,.12)' } }
+      }
+    }
+  });
+}
+
+function switchLeadTime(period) {
+  document.querySelectorAll('.lead-time-tab').forEach(b => {
+    b.className = 'lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400';
+  });
+  const active = document.querySelector(`.lead-time-tab[data-leadtime="${period}"]`);
+  if (active) active.className = 'lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium bg-violet-500/20 text-violet-600 border border-violet-400/30';
+  initAdTrendChart(period);
+}
+
+initAdTrendChart('14d');
+
+// ====== 消耗占比饼图 ======
+const pieData = {
+  team: {
+    labels: ['A 团队', 'B 团队', 'C 团队', 'D 团队', 'E 团队'],
+    data: [28.7, 25.0, 21.1, 16.9, 13.0],
+    costs: ['¥24.8万', '¥21.6万', '¥18.2万', '¥14.6万', '¥11.2万'],
+    colors: ['#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe']
+  },
+  genre: {
+    labels: ['都市男频', '古言女频', '玄幻', '战神', '豪门', '悬疑'],
+    data: [24, 18, 16, 14, 15, 13],
+    costs: ['¥20.8万', '¥15.6万', '¥13.8万', '¥12.1万', '¥13.0万', '¥11.2万'],
+    colors: ['#8b5cf6', '#06b6d4', '#f59e0b', '#ec4899', '#10b981', '#a78bfa']
+  },
+  struct: {
+    labels: ['口播网赚', '原片素材', '视频号素材', '海报素材', '迭代素材'],
+    data: [28, 22, 20, 16, 14],
+    costs: ['¥24.2万', '¥19.0万', '¥17.3万', '¥13.8万', '¥12.1万'],
+    colors: ['#f59e0b', '#0ea5e9', '#8b5cf6', '#f43f5e', '#10b981']
+  }
+};
+
+let pieChart;
+let _pieView = 'team';
+function initPieChart(view) {
+  _pieView = view;
+  const d = pieData[view] || pieData.team;
+  if (pieChart) pieChart.destroy();
+  pieChart = new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: {
+      labels: d.labels,
+      datasets: [{
+        data: d.data,
+        backgroundColor: d.colors,
+        borderWidth: 2,
+        borderColor: '#ffffff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            color: '#475569', font: { size: 11 }, boxWidth: 12, padding: 8,
+            generateLabels: function(chart) {
+              const ds = chart.data.datasets[0];
+              const costs = (pieData[_pieView] || pieData.team).costs || [];
+              return chart.data.labels.map((label, i) => ({
+                text: label + '  ' + costs[i],
+                fillStyle: ds.backgroundColor[i],
+                strokeStyle: ds.backgroundColor[i],
+                lineWidth: 0,
+                index: i
+              }));
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const costs = (pieData[_pieView] || pieData.team).costs || [];
+              return ctx.label + ': ' + ctx.parsed + '% · ' + (costs[ctx.dataIndex] || '');
+            }
+          }
+        }
+      }
+    }
+  });
+  pieChart._currentView = view;
+}
+
+function switchPieView(view) {
+  document.querySelectorAll('#pieTypeTabs button').forEach(b => {
+    b.className = 'px-2 py-0.5 rounded text-[10px] font-medium text-slate-400 hover:text-white';
+  });
+  const active = document.querySelector(`#pieTypeTabs button[data-pieview="${view}"]`);
+  if (active) active.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-violet-500/20 text-violet-600 border border-violet-400/30';
+  initPieChart(view);
+}
+
+initPieChart('team');
+
+// ====== 团队在跑素材筛选 ======
+function filterOtlTeamRun(){
+  const materialName = document.getElementById('otlTeamRunMaterialName').value.trim().toLowerCase();
+  const workName = document.getElementById('otlTeamRunWorkName').value.trim().toLowerCase();
+  const teamName = document.getElementById('otlTeamRunTeamName').value.trim().toLowerCase();
+  const costMin = parseFloat(document.getElementById('otlTeamRunCostMin').value) || 0;
+  const costMax = parseFloat(document.getElementById('otlTeamRunCostMax').value) || Infinity;
+  document.querySelectorAll('.otl-team-run-row').forEach(row => {
+    const tds = row.querySelectorAll('td');
+    const material = tds[0]?.textContent.trim().toLowerCase() || '';
+    const work = tds[1]?.textContent.trim().toLowerCase() || '';
+    const team = tds[3]?.textContent.trim().toLowerCase() || '';
+    const costStr = tds[6]?.textContent.replace(/[¥,]/g,'') || '0';
+    const cost = parseFloat(costStr) || 0;
+    const matchMaterial = !materialName || material.includes(materialName);
+    const matchWork = !workName || work.includes(workName);
+    const matchTeam = !teamName || team.includes(teamName);
+    const matchCost = cost >= costMin && cost <= costMax;
+    if(matchMaterial && matchWork && matchTeam && matchCost) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+  });
+}
+function resetOtlTeamRun(){
+  document.getElementById('otlTeamRunMaterialName').value='';
+  document.getElementById('otlTeamRunWorkName').value='';
+  document.getElementById('otlTeamRunTeamName').value='';
+  document.getElementById('otlTeamRunCostMin').value='';
+  document.getElementById('otlTeamRunCostMax').value='';
+  document.querySelectorAll('.otl-team-run-row').forEach(row=>row.classList.remove('hidden'));
+}
+let _otlDialogChart;
+function _openOtlChartDialog(title, sub, labels, data, color){
+  const dlg = document.getElementById('otlChartDialog');
+  document.getElementById('otlChartDialogTitle').textContent = title;
+  document.getElementById('otlChartDialogSub').textContent = sub;
+  dlg.classList.remove('hidden'); dlg.classList.add('flex');
+  if (_otlDialogChart) { _otlDialogChart.destroy(); }
+  const ctx = document.getElementById('otlChartDialogCanvas');
+  _otlDialogChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: labels, datasets: [{ label: title, data: data, borderColor: color, backgroundColor: color + '22', tension: 0.3, fill: true, pointRadius: 3 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+  });
+}
+function closeOtlChartDialog(){ const dlg = document.getElementById('otlChartDialog'); dlg.classList.add('hidden'); dlg.classList.remove('flex'); }
+function showOtlHourlyChart(btn){
+  const row = btn.closest('tr');
+  const name = row ? (row.querySelector('td:nth-child(1)')?.innerText || '') : '';
+  const hours = ['00','02','04','06','08','10','12','14','16','18','20','22'];
+  const data = hours.map((_,i)=> Math.round(200 + 1800 * Math.exp(-Math.pow((i-7)/3.5,2)) * (0.7 + Math.random()*0.6)));
+  _openOtlChartDialog('分时消耗（24h）', name.trim() || '素材分时消耗趋势', hours.map(h=>h+':00'), data, '#8b5cf6');
+}
+function showOtlDailyChart(btn){
+  const row = btn.closest('tr');
+  const name = row ? (row.querySelector('td:nth-child(2)')?.innerText || '') : '';
+  const days = Array.from({length:14},(_,i)=>'D-'+(13-i));
+  const data = days.map((_,i)=> Math.round(2000 + i*350 + Math.random()*1500));
+  _openOtlChartDialog('分天消耗（近 14 天）', name.trim() || '素材分天消耗趋势', days, data, '#7c3aed');
+}
+
+// ====== 大盘优质素材 ======
+function toggleSection(id, btn){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(el.style.display === 'none'){
+    el.style.display = '';
+    if(btn) btn.textContent = '▲';
+  } else {
+    el.style.display = 'none';
+    if(btn) btn.textContent = '▼';
+  }
+}
+function filterOtlTopMaterials(){
+  const costMin = parseFloat(document.getElementById('otlTopCostMin').value) || 0;
+  const costMax = parseFloat(document.getElementById('otlTopCostMax').value) || Infinity;
+  const workName = document.getElementById('otlTopWorkName').value.trim().toLowerCase();
+  const structType = document.getElementById('otlTopStructFilter').value;
+  document.querySelectorAll('.otl-top-row').forEach(row => {
+    const tds = row.querySelectorAll('td');
+    const work = tds[3]?.textContent.trim().toLowerCase() || '';
+    const costStr = tds[10]?.textContent.replace(/[¥,]/g,'') || '0';
+    const cost = parseFloat(costStr) || 0;
+    const struct = tds[16]?.textContent.trim() || '';
+    const matchWork = !workName || work.includes(workName);
+    const matchCost = cost >= costMin && cost <= costMax;
+    const matchStruct = !structType || struct === structType;
+    if(matchWork && matchCost && matchStruct) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+  });
+}
+function resetOtlTopFilter(){
+  document.getElementById('otlTopCostMin').value='';
+  document.getElementById('otlTopCostMax').value='';
+  document.getElementById('otlTopWorkName').value='';
+  document.getElementById('otlTopStructFilter').value='';
+  document.querySelectorAll('.otl-top-row').forEach(row=>row.classList.remove('hidden'));
+}
+function toggleOtlTopSelectAll(){
+  const all = document.getElementById('otlTopSelectAll').checked;
+  document.querySelectorAll('.otl-top-item').forEach(cb => cb.checked = all);
+  updateOtlTopCount();
+}
+function updateOtlTopCount(){
+  const count = document.querySelectorAll('.otl-top-item:checked').length;
+  document.getElementById('otlTopSelectedCount').textContent = '已选 ' + count + ' 条素材';
+}
+document.addEventListener('change', e => { if(e.target.classList.contains('otl-top-item')) updateOtlTopCount(); });
+function goCreateAd(section){ alert('前往创建广告（' + section + '）'); }
+
+// ====== 团队排行展开/折叠 ======
+function toggleTeamRow(id) {
+  const detail = document.getElementById(id);
+  const row = detail?.previousElementSibling;
+  const arrow = row?.querySelector('.team-arrow');
+  if (!detail) return;
+  if (detail.style.display === 'none' || detail.classList.contains('hidden')) {
+    detail.classList.remove('hidden');
+    detail.style.display = 'table-row';
+    if (arrow) arrow.textContent = '▼';
+  } else {
+    detail.classList.add('hidden');
+    detail.style.display = 'none';
+    if (arrow) arrow.textContent = '▶';
+  }
+}
+
+// ====== 媒体维度切换 ======
+function switchMedia(tab) {
+  document.querySelectorAll('#mediaTabs .media-tab').forEach(b => {
+    if (b.dataset.tab === tab) {
+      b.className = 'media-tab px-3 py-1.5 rounded text-xs font-medium bg-violet-500/30 text-violet-700 border border-violet-400/40';
+    } else {
+      b.className = 'media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
+    }
+  });
+}
+
+// ====== 类型维度切换 ======
+function switchType(tab) {
+  document.querySelectorAll('#typeTabs .type-tab').forEach(b => {
+    if (b.dataset.tab === tab) {
+      b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium bg-violet-500/30 text-violet-700 border border-violet-400/40';
+    } else {
+      b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
+    }
+  });
+}
+
+// ====== 业务线切换 ======
+function switchBiz(val) {
+  // placeholder for business line switch logic
+}
+
+// ====== 团队在跑素材筛选 ======
+function filterOtlRun(){
+  const name = document.getElementById('otlRunMaterialName').value.trim().toLowerCase();
+  const work = document.getElementById('otlRunWorkName').value.trim().toLowerCase();
+  const costMin = parseFloat(document.getElementById('otlRunCostMin').value) || 0;
+  const costMax = parseFloat(document.getElementById('otlRunCostMax').value) || Infinity;
+  document.querySelectorAll('.otl-run-row').forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const mName = (cells[0]?.textContent || '').toLowerCase();
+    const wName = (cells[1]?.textContent || '').toLowerCase();
+    const cost = parseFloat((cells[5]?.textContent || '0').replace(/[¥,]/g, '')) || 0;
+    const nameOk = !name || mName.includes(name);
+    const workOk = !work || wName.includes(work);
+    const costOk = cost >= costMin && cost <= costMax;
+    row.style.display = (nameOk && workOk && costOk) ? '' : 'none';
+  });
+}
+function resetOtlRun(){
+  document.getElementById('otlRunMaterialName').value = '';
+  document.getElementById('otlRunWorkName').value = '';
+  document.getElementById('otlRunCostMin').value = '';
+  document.getElementById('otlRunCostMax').value = '';
+  document.querySelectorAll('.otl-run-row').forEach(r => r.style.display = '');
+}
+
+</script>
+</body>
+</html>

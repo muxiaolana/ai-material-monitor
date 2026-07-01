@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>投放优化师 · 选材工作台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;color:#1e293b;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .kpi{background:#ffffff;}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;color:#64748b;font-size:13px;}
+  .sidebar a.active{background:#cffafe;color:#155e75;border-left:3px solid #06b6d4;}
+  .sidebar a:hover{color:#1e293b;background:#f8fafc;}
+  .pill{padding:2px 8px;border-radius:999px;font-size:11px;}
+  .grade-S{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+  .grade-A{background:#e0e7ff;color:#4338ca;border:1px solid #c7d2fe;}
+  .grade-B{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}
+  .grade-C{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;}
+  .grade-D{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;}
+  .tag{padding:2px 7px;border-radius:6px;background:#e0e7ff;color:#4338ca;font-size:10px;}
+  table{width:100%;font-size:13px;}
+  th{text-align:left;font-weight:500;color:#64748b;padding:10px 8px;border-bottom:1px solid #e2e8f0;}
+  td{padding:10px 8px;border-bottom:1px solid #f1f5f9;color:#334155;}
+  .star{cursor:pointer;color:#cbd5e1;}
+  .star.on{color:#f59e0b;}
+  canvas{max-height:500px;}
+  .star-row,.new-row{cursor:pointer;transition:background .15s;}
+  .star-row:hover,.new-row:hover{background:#f8fafc;}
+  .star-detail,.new-detail{background:#fafbfc;}
+  .star-arrow,.new-arrow{cursor:default;font-size:12px;color:#94a3b8;transition:transform .15s;}
+
+  /* === Light Flat Overrides === */
+  aside{background:#ffffff !important;border-color:#e2e8f0 !important;}
+  aside .text-sm, aside .text-\[11px\]{color:#64748b !important;}
+  aside .font-semibold{color:#1e293b !important;}
+  header{border-color:#e2e8f0 !important;}
+  [class*="bg-slate-950"]{background-color:#ffffff !important;}
+  [class*="bg-slate-900"]{background-color:#f8fafc !important;}
+  [class*="bg-slate-800"]{background-color:#e2e8f0 !important;}
+  [class*="border-slate-800"],[class*="border-slate-700"]{border-color:#e2e8f0 !important;}
+  [class*="text-white"]{color:#1e293b !important;}
+  [class*="text-slate-300"]{color:#475569 !important;}
+  [class*="text-slate-400"]{color:#64748b !important;}
+  [class*="text-slate-500"]{color:#94a3b8 !important;}
+  [class*="text-slate-900"]{color:#1e293b !important;}
+  [class*="text-emerald-300"],[class*="text-emerald-400"]{color:#059669 !important;}
+  [class*="text-cyan-300"],[class*="text-cyan-200"]{color:#0891b2 !important;}
+  [class*="text-indigo-300"]{color:#4f46e5 !important;}
+  [class*="text-amber-300"],[class*="text-amber-400"]{color:#d97706 !important;}
+  [class*="text-rose-300"],[class*="text-rose-400"]{color:#e11d48 !important;}
+  [class*="text-blue-300"]{color:#2563eb !important;}
+  [class*="text-purple-300"]{color:#7c3aed !important;}
+  [class*="bg-cyan-500\/3"]{background-color:rgba(6,182,212,.08) !important;}
+  [class*="bg-cyan-500\/2"]{background-color:rgba(6,182,212,.06) !important;}
+  [class*="border-cyan-500"],[class*="border-cyan-400"]{border-color:#a5f3fc !important;}
+  [class*="bg-rose-500\/1"]{background-color:rgba(244,63,94,.06) !important;}
+  [class*="bg-amber-500\/1"]{background-color:rgba(245,158,11,.08) !important;}
+  [class*="border-rose-500"]{border-color:#fecaca !important;}
+  [class*="border-amber-500"]{border-color:#fde68a !important;}
+  [class*="bg-gradient-to-br"]{opacity:0.85;}
+  .filter-type,.filter-genre,.time-tab{transition:all .15s;}
+  .sidebar .nav-link.active{background:rgba(6,182,212,.15) !important;color:#22d3ee !important;border-left:3px solid #22d3ee;}
+  .sidebar .nav-link:hover{color:#e2e8f0 !important;background:rgba(255,255,255,.05) !important;}
+</style>
+</head>
+<body class="min-h-screen flex">
+
+<aside class="w-60 shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col">
+  <div class="p-5 border-b border-slate-800 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-sky-500 flex items-center justify-center font-bold text-sm">MC</div>
+    <div><div class="text-sm font-semibold">素材中台</div><div class="text-[11px] text-slate-500">优化师工作台</div></div>
+  </div>
+  <div class="px-4 py-3 text-[11px] text-slate-500">选材工作台</div>
+  <nav class="sidebar px-3 space-y-1 flex-1">
+    <a href="index.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">首页</a>
+    <a href="boss.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">管理者素材一览</a>
+    <a href="optimizer-team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化团队负责人素材盯盘</a>
+    <a href="team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化组长素材盯盘</a>
+    <a href="optimizer.html" class="nav-link active px-3 py-2 rounded-lg text-xs font-medium">优化师素材盯盘</a>
+    <a href="material-team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材团队负责人素材盯盘</a>
+    <a href="material-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材组长工作台</a>
+    <a href="designer.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材师工作台</a>
+    <a href="admin.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">系统管理员监控平台</a>
+  </nav>
+  <div class="p-4 border-t border-slate-800 flex items-center gap-3">
+    <div class="w-8 h-8 rounded-full bg-cyan-500/30 flex items-center justify-center text-sm">⚙️</div>
+    <div><div class="text-sm">王明</div><div class="text-[11px] text-slate-500">A 团队 · 优化师</div></div>
+  </div>
+</aside>
+
+<main class="flex-1 overflow-x-hidden">
+  <header class="px-8 py-4 flex items-center justify-between border-b border-slate-800/70">
+    <div>
+      <div class="text-xs text-slate-500">本周战绩：消耗 ¥18.4 万 · ROI 1.82</div>
+      <h1 class="text-xl font-semibold mt-0.5">选材工作台</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="px-3 py-1.5 text-xs bg-violet-100 hover:bg-violet-200 text-violet-700 border border-violet-200 rounded-lg" onclick="exportReport()">📤 导出报表</button>
+      <button class="px-3 py-1.5 text-xs bg-violet-100 hover:bg-violet-200 text-violet-700 border border-violet-200 rounded-lg" onclick="savePDF()" title="该操作为页面快照，请确认您要看的数据信息全部展开，再执行该操作">📄 保存页面为PDF</button>
+    </div>
+  </header>
+
+  <!-- 时间维度切换 + KPI -->
+  <section class="px-8 pt-6">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="flex bg-slate-900/80 border border-slate-800 rounded-xl p-1 gap-0.5" id="timeTabs">
+          <button onclick="switchTime('today')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all bg-cyan-500/30 text-cyan-200 border border-cyan-400/40" data-tab="today">今日</button>
+          <button onclick="switchTime('week')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="week">本周</button>
+          <button onclick="switchTime('month')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="month">本月</button>
+          <button onclick="switchTime('year')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="year">年度</button>
+          <button onclick="switchTime('custom')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="custom">自定义</button>
+        </div>
+        <div class="flex bg-slate-900/80 border border-slate-800 rounded-lg p-0.5 gap-0.5" id="mediaTabs">
+          <button onclick="switchMedia('all')" class="media-tab px-3 py-1.5 rounded text-xs font-medium bg-cyan-500/30 text-cyan-200 border border-cyan-400/40" data-tab="all">全部</button>
+          <button onclick="switchMedia('toutiao')" class="media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="toutiao">头条</button>
+          <button onclick="switchMedia('guangdiantong')" class="media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="guangdiantong">广点通</button>
+          <button onclick="switchMedia('kuaishou')" class="media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="kuaishou">快手</button>
+        </div>
+        <div class="flex bg-slate-900/80 border border-slate-800 rounded-lg p-0.5 gap-0.5" id="typeTabs">
+          <button onclick="switchType('all')" class="type-tab px-3 py-1.5 rounded text-xs font-medium bg-cyan-500/30 text-cyan-200 border border-cyan-400/40" data-tab="all">全部</button>
+          <button onclick="switchType('drama')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="drama">短剧</button>
+          <button onclick="switchType('novel')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="novel">小说</button>
+        </div>
+        <select id="bizSelect" onchange="switchBiz(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-cyan-500 max-w-[200px]">
+          <option value="all">全部</option>
+          <option value="客户端-付费小说">客户端-付费小说</option>
+          <option value="快应用">快应用</option>
+          <option value="商业化-客户端">商业化-客户端</option>
+          <option value="商业化-快应用">商业化-快应用</option>
+          <option value="客户端-金币">客户端-金币</option>
+          <option value="快应用-短剧">快应用-短剧</option>
+          <option value="新媒体-短剧">新媒体-短剧</option>
+          <option value="新媒体-阳光书城">新媒体-阳光书城</option>
+          <option value="客户端-免费短剧">客户端-免费短剧</option>
+          <option value="华为快应用">华为快应用</option>
+          <option value="快应用-免费短剧">快应用-免费短剧</option>
+          <option value="内循环-短剧">内循环-短剧</option>
+          <option value="新媒体-免费小说">新媒体-免费小说</option>
+          <option value="客户端-付费短剧">客户端-付费短剧</option>
+          <option value="内循环-免费短剧">内循环-免费短剧</option>
+          <option value="内循环-付费小说">内循环-付费小说</option>
+          <option value="内循环-分销短剧">内循环-分销短剧</option>
+          <option value="内循环-分销免费短剧">内循环-分销免费短剧</option>
+          <option value="内循环-免费小说">内循环-免费小说</option>
+          <option value="头条端原生-免费">头条端原生-免费</option>
+          <option value="头条端原生-付费">头条端原生-付费</option>
+          <option value="番茄短剧分销">番茄短剧分销</option>
+          <option value="客户端-免费马甲包">客户端-免费马甲包</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="customRange" class="hidden items-center gap-2">
+          <input type="date" value="2026-05-01" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300">
+          <span class="text-slate-500 text-xs">至</span>
+          <input type="date" value="2026-05-23" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300">
+          <button class="px-2 py-1 bg-cyan-500 rounded text-xs text-slate-900">查询</button>
+        </div>
+        <div class="text-xs text-slate-500" id="timeLabel">2026-05-23 · 截至当前时刻</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-4 gap-4" id="kpiPanel"></div>
+  </section>
+
+  <!-- 分类筛选 -->
+  <section class="px-8 pt-4">
+    <div class="flex items-center gap-6 flex-wrap">
+    </div>
+  </section>
+
+  <!-- 组内星标素材 -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm font-semibold flex items-center gap-2">⭐ 组内星标素材 <span class="pill grade-A">Star</span></div>
+          <div class="text-xs text-slate-500 mt-1">团队负责人标记的高优素材，点击展开查看明细</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex gap-3 text-xs">
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">作品总数</span><span class="font-semibold text-slate-700">12</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">素材总数/已使用数</span><span class="font-semibold text-slate-700">56 / 48</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">迭代素材数/已使用</span><span class="font-semibold text-slate-700">18 / 14</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">未使用素材</span><span class="font-semibold text-rose-500">8</span></div>
+          </div>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:text-cyan-400 hover:bg-cyan-50 border border-slate-200 transition-colors" title="刷新">↻</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 hover:text-cyan-500 hover:bg-cyan-50 border border-slate-200 transition-colors" title="折叠/展开" onclick="toggleSection('starBody',this)">▲</button>
+        </div>
+      </div>
+      <div id="starBody">
+      <!-- 筛选查询栏 -->
+      <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex-wrap">
+        <span class="text-xs font-medium text-slate-600 shrink-0">素材名称：</span>
+        <input type="text" id="starMaterialName" placeholder="输入素材名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">剧名/小说名：</span>
+        <input type="text" id="starWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-40 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">消耗范围：</span>
+        <input type="number" id="starCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="starCostMax" placeholder="最大消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">创建广告数：</span>
+        <input type="number" id="starAdMin" placeholder="最小" class="px-2 py-1 text-xs rounded border border-slate-300 w-20 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="starAdMax" placeholder="最大" class="px-2 py-1 text-xs rounded border border-slate-300 w-20 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <button class="px-4 py-1 text-xs rounded bg-cyan-500 text-white font-semibold hover:bg-cyan-400 ml-auto" onclick="filterStarMaterials()">查询</button>
+        <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetStarFilter()">重置</button>
+      </div>
+      <table>
+        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="starSelectAll" onclick="toggleStarSelectAll()"></th><th class="w-8"></th><th>作品</th><th>类型</th><th>题材</th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>素材数</th><th>迭代素材数</th><th>累计消耗</th><th>均消</th><th>CTR</th><th>ROI</th><th>CVR</th><th>是否含优质</th></tr></thead>
+        <tbody>
+          <!-- 都市重生 -->
+          <tr class="star-row" onclick="toggleStarRow('star-1')">
+            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-1" onclick="event.stopPropagation()"></td>
+            <td><span class="star-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">都市重生</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>都市男频</td><td><span class="pill grade-S">S</span></td><td>3 条</td><td>1 条</td><td>¥24,680</td><td>¥8,227</td><td>5.4%</td><td>2.08</td><td>3.2%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
+          </tr>
+          <tr id="star-1" class="star-detail hidden">
+            <td colspan="15">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-1',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-yellow-600"></div></td><td class="font-medium text-slate-700">黄金开场 V8</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">陈思远</td><td>124</td><td>5</td><td>¥9,820</td><td>5.8%</td><td>76%</td><td>2.18</td><td>3.5%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-yellow-400 to-amber-600"></div></td><td class="font-medium text-slate-700">冲突高潮 V6</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">李婷婷</td><td>98</td><td>3</td><td>¥8,260</td><td>5.2%</td><td>70%</td><td>2.06</td><td>3.1%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-500 to-orange-600"></div></td><td class="font-medium text-slate-700">悬念收尾 V4</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">王磊</td><td>76</td><td>2</td><td>¥6,600</td><td>4.8%</td><td>62%</td><td>1.92</td><td>2.9%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 古言冷面王爷 -->
+          <tr class="star-row" onclick="toggleStarRow('star-2')">
+            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-2" onclick="event.stopPropagation()"></td>
+            <td><span class="star-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">古言冷面王爷</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>古言女频</td><td><span class="pill grade-S">S</span></td><td>2 条</td><td>0 条</td><td>¥14,820</td><td>¥7,410</td><td>5.0%</td><td>1.96</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
+          </tr>
+          <tr id="star-2" class="star-detail hidden">
+            <td colspan="15">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-2',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-red-600"></div></td><td class="font-medium text-slate-700">V5 情感爆发版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">周婷</td><td>86</td><td>4</td><td>¥8,420</td><td>5.4%</td><td>74%</td><td>2.12</td><td>3.3%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-rose-600"></div></td><td class="font-medium text-slate-700">V4 误会解除版</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">刘洋</td><td>72</td><td>2</td><td>¥6,400</td><td>4.6%</td><td>66%</td><td>1.82</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 战神归来 -->
+          <tr class="star-row" onclick="toggleStarRow('star-3')">
+            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-3" onclick="event.stopPropagation()"></td>
+            <td><span class="star-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">战神归来</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>战神</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>0 条</td><td>¥11,240</td><td>¥5,620</td><td>4.6%</td><td>1.82</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td>
+          </tr>
+          <tr id="star-3" class="star-detail hidden">
+            <td colspan="15">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-3',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">热血集结 V10</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">黄磊</td><td>68</td><td>3</td><td>¥6,840</td><td>5.0%</td><td>72%</td><td>1.96</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-red-600"></div></td><td class="font-medium text-slate-700">逆袭反击 V7</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">孙涛</td><td>52</td><td>2</td><td>¥4,400</td><td>4.2%</td><td>60%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 玄幻逆袭 -->
+          <tr class="star-row" onclick="toggleStarRow('star-4')">
+            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-4" onclick="event.stopPropagation()"></td>
+            <td><span class="star-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">玄幻逆袭</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>玄幻</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>1 条</td><td>¥9,680</td><td>¥4,840</td><td>4.4%</td><td>1.74</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
+          </tr>
+          <tr id="star-4" class="star-detail hidden">
+            <td colspan="15">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-4',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-emerald-600"></div></td><td class="font-medium text-slate-700">觉醒突破 V5</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">林小雨</td><td>56</td><td>2</td><td>¥5,880</td><td>4.8%</td><td>68%</td><td>1.84</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 text-[10px] border border-pink-200">解压</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-green-600"></div></td><td class="font-medium text-slate-700">秘境探险 V3</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">张婷</td><td>44</td><td>1</td><td>¥3,800</td><td>4.0%</td><td>56%</td><td>1.62</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 分页 -->
+      <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+        <span class="text-xs text-slate-500">共 <span class="font-semibold text-slate-700">56</span> 条 · 每页 <span class="font-semibold text-slate-700">10</span> 条</span>
+        <div class="flex items-center gap-1">
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 border border-slate-200" disabled>‹</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs font-medium bg-cyan-500 text-white">1</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">2</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">3</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">4</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">5</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">6</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">›</button>
+        </div>
+      </div>
+      <!-- 底部操作栏 -->
+      <div class="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
+        <div class="text-xs text-slate-500" id="starSelectedCount">已选 0 条素材</div>
+        <button class="py-2 px-6 text-xs bg-cyan-500 hover:bg-cyan-400 text-white rounded-lg font-semibold" style="width:220px" onclick="goCreateAd('star')">前往创建广告</button>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 大盘优质素材 -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm font-semibold flex items-center gap-2">🔥 大盘优质素材 <span class="pill grade-A">Hot</span></div>
+          <div class="text-xs text-slate-500 mt-1">全平台高消耗素材明细，按累计消耗倒序排列</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex gap-3 text-xs">
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">作品总数</span><span class="font-semibold text-slate-700">68</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">素材总数</span><span class="font-semibold text-slate-700">86</span></div>
+          </div>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:text-cyan-400 hover:bg-cyan-50 border border-slate-200 transition-colors" title="刷新">↻</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 hover:text-cyan-500 hover:bg-cyan-50 border border-slate-200 transition-colors" title="折叠/展开" onclick="toggleSection('topBody',this)">▲</button>
+        </div>
+      </div>
+      <div id="topBody">
+      <!-- 筛选查询栏 -->
+      <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
+        <span class="text-xs font-medium text-slate-600 shrink-0">素材名称：</span>
+        <input type="text" id="topMaterialName" placeholder="输入素材名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">消耗范围：</span>
+        <input type="number" id="topCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="topCostMax" placeholder="最大消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">所属作品：</span>
+        <input type="text" id="topWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">结构类型：</span>
+        <select id="topStructFilter" class="px-2 py-1 text-xs rounded border border-slate-300 w-28 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+          <option value="">全部</option>
+          <option value="迭代素材">迭代素材</option>
+          <option value="原片素材">原片素材</option>
+          <option value="口播网赚">口播网赚</option>
+          <option value="视频号素材">视频号素材</option>
+          <option value="滚屏">滚屏</option>
+          <option value="解压">解压</option>
+          <option value="小说前贴">小说前贴</option>
+        </select>
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">结构占比：</span>
+        <span class="text-xs text-slate-500" id="topStructRatio">迭代 32% / 原片 24% / 口播 18% / 视频 14% / 滚屏 6% / 解压 4% / 小说前贴 2%</span>
+        <button class="px-4 py-1 text-xs rounded bg-cyan-500 text-white font-semibold hover:bg-cyan-400 ml-auto" onclick="filterTopMaterials()">查询</button>
+        <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetTopFilter()">重置</button>
+      </div>
+      <table>
+        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="topSelectAll" onclick="toggleTopSelectAll()"></th><th>缩略图</th><th>素材名</th><th>所属作品</th><th>类型</th><th>题材</th><th>素材师</th><th>生产类别</th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>总广告</th><th>累计消耗</th><th>分天消耗</th><th>分时消耗</th><th>展示数</th><th>点击数</th><th>转化数</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>结构类型</th></tr></thead>
+        <tbody>
+          <!-- 按累计消耗倒序排列 -->
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-violet-400 to-indigo-600"></div></td>
+            <td class="font-medium text-slate-700">钩子 V12</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">陈思远</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>156</td><td>¥12,800</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>220,690</td><td>12,800</td><td>435</td><td>5.8%</td><td>78%</td><td>2.12</td><td>3.4%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-blue-600"></div></td>
+            <td class="font-medium text-slate-700">爽点剪辑 V8</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">李婷婷</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>128</td><td>¥11,200</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>207,407</td><td>11,200</td><td>358</td><td>5.4%</td><td>74%</td><td>2.02</td><td>3.2%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td>
+            <td class="font-medium text-slate-700">V6 虐恋版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">周婷</td>
+            <td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>112</td><td>¥10,800</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>207,692</td><td>10,800</td><td>335</td><td>5.2%</td><td>72%</td><td>1.98</td><td>3.1%</td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-cyan-600"></div></td>
+            <td class="font-medium text-slate-700">反转开场 V6</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">王磊</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>96</td><td>¥9,600</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>192,000</td><td>9,600</td><td>288</td><td>5.0%</td><td>70%</td><td>1.88</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td>
+            <td class="font-medium text-slate-700">V5 甜宠版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">刘洋</td>
+            <td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>96</td><td>¥9,400</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>195,833</td><td>9,400</td><td>273</td><td>4.8%</td><td>68%</td><td>1.86</td><td>2.9%</td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td>
+            <td class="font-medium text-slate-700">短挂 V10</td>
+            <td><span class="text-slate-600">战神归来</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>战神</td>
+            <td class="text-slate-500">黄磊</td>
+            <td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>98</td><td>¥8,600</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>179,167</td><td>8,600</td><td>249</td><td>4.8%</td><td>66%</td><td>1.86</td><td>2.9%</td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 text-[10px] border border-pink-200">解压</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-indigo-500"></div></td>
+            <td class="font-medium text-slate-700">情感线 V4</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">赵敏</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>72</td><td>¥8,200</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>178,261</td><td>8,200</td><td>230</td><td>4.6%</td><td>64%</td><td>1.76</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td>
+            <td class="font-medium text-slate-700">V4 反转版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">马超</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>78</td><td>¥8,200</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>186,364</td><td>8,200</td><td>221</td><td>4.4%</td><td>62%</td><td>1.74</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td>
+            <td class="font-medium text-slate-700">新版 V5</td>
+            <td><span class="text-slate-600">玄幻逆袭</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>玄幻</td>
+            <td class="text-slate-500">林小雨</td>
+            <td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>86</td><td>¥8,400</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>162,500</td><td>7,800</td><td>211</td><td>4.8%</td><td>58%</td><td>1.82</td><td>2.9%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-purple-400 to-rose-600"></div></td>
+            <td class="font-medium text-slate-700">V3 初见版</td>
+            <td><span class="text-slate-600">古言冷面王爷</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>古言女频</td>
+            <td class="text-slate-500">孙涛</td>
+            <td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>52</td><td>¥7,800</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>175,000</td><td>7,400</td><td>192</td><td>4.0%</td><td>54%</td><td>1.62</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td>
+            <td class="font-medium text-slate-700">开服版 V4</td>
+            <td><span class="text-slate-600">玄幻逆袭</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>玄幻</td>
+            <td class="text-slate-500">张婷</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>64</td><td>¥7,600</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>154,167</td><td>7,400</td><td>185</td><td>4.4%</td><td>52%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td>
+            <td class="font-medium text-slate-700">高燃 V8</td>
+            <td><span class="text-slate-600">战神归来</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>战神</td>
+            <td class="text-slate-500">钱进</td>
+            <td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>76</td><td>¥7,400</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>162,500</td><td>7,200</td><td>180</td><td>4.4%</td><td>48%</td><td>1.72</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-300 to-violet-500"></div></td>
+            <td class="font-medium text-slate-700">金手指 V3</td>
+            <td><span class="text-slate-600">都市重生</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>都市男频</td>
+            <td class="text-slate-500">吴强</td>
+            <td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td>
+            <td><span class="pill grade-S">S</span></td>
+            <td>54</td><td>¥6,800</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>156,522</td><td>6,600</td><td>165</td><td>4.2%</td><td>46%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 text-[10px] border border-pink-200">解压</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-cyan-400 to-emerald-600"></div></td>
+            <td class="font-medium text-slate-700">修炼 V3</td>
+            <td><span class="text-slate-600">玄幻逆袭</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
+            <td>玄幻</td>
+            <td class="text-slate-500">郑华</td>
+            <td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>42</td><td>¥6,800</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>161,111</td><td>5,800</td><td>133</td><td>4.0%</td><td>44%</td><td>1.56</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td>
+            <td class="font-medium text-slate-700">复仇版 V6</td>
+            <td><span class="text-slate-600">战神归来</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>战神</td>
+            <td class="text-slate-500">冯凯</td>
+            <td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>58</td><td>¥6,600</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>148,148</td><td>5,200</td><td>125</td><td>4.0%</td><td>42%</td><td>1.62</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td>
+          </tr>
+          <tr class="top-row">
+            <td><input type="checkbox" class="accent-cyan-500 top-item"></td>
+            <td><div class="w-10 h-7 rounded bg-gradient-to-br from-yellow-400 to-orange-600"></div></td>
+            <td class="font-medium text-slate-700">觉醒 V4</td>
+            <td><span class="text-slate-600">战神归来</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
+            <td>战神</td>
+            <td class="text-slate-500">何敏</td>
+            <td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td>
+            <td><span class="pill grade-A">A</span></td>
+            <td>36</td><td>¥5,800</td><td><button onclick="showTopDailyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分天消耗">📈</button></td><td><button onclick="showTopHourlyChart(this)" class="text-cyan-500 hover:text-cyan-400 text-sm" title="查看分时消耗">📈</button></td><td>140,909</td><td>4,600</td><td>106</td><td>3.6%</td><td>40%</td><td>1.52</td><td>2.3%</td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 底部操作栏 -->
+      <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+        <span class="text-xs text-slate-500">共 <span class="font-semibold text-slate-700">86</span> 条 · 每页 <span class="font-semibold text-slate-700">10</span> 条</span>
+        <div class="flex items-center gap-1">
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 border border-slate-200" disabled>‹</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs font-medium bg-cyan-500 text-white">1</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">2</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">3</button>
+          <span class="text-xs text-slate-400 px-1">...</span>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">9</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">›</button>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
+        <div class="text-xs text-slate-500" id="topSelectedCount">已选 0 条素材</div>
+        <button class="py-2 px-6 text-xs bg-cyan-500 hover:bg-cyan-400 text-white rounded-lg font-semibold" style="width:220px" onclick="goCreateAd('top')">前往创建广告</button>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 今日新素材 -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm font-semibold flex items-center gap-2">📋 我的素材池 <span class="pill grade-S">Pool</span></div>
+          <div class="text-xs text-slate-500 mt-1">按作品分组，点击展开查看素材明细及投放数据</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex gap-3 text-xs">
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">作品总数</span><span class="font-semibold text-slate-700">9</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">素材总数/已使用数</span><span class="font-semibold text-slate-700">42 / 36</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">迭代素材数/已使用</span><span class="font-semibold text-slate-700">14 / 11</span></div>
+            <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200"><span class="text-slate-400">未使用素材</span><span class="font-semibold text-rose-500">6</span></div>
+          </div>
+          <button class="px-3 py-1 text-xs rounded bg-cyan-50 text-cyan-600 border border-cyan-200 hover:bg-cyan-100 font-medium" onclick="toggleTodayOnly(this)">只看今日</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:text-cyan-400 hover:bg-cyan-50 border border-slate-200 transition-colors" title="刷新">↻</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 hover:text-cyan-500 hover:bg-cyan-50 border border-slate-200 transition-colors" title="折叠/展开" onclick="toggleSection('poolBody',this)">▲</button>
+        </div>
+      </div>
+      <div id="poolBody">
+      <!-- 筛选查询栏 -->
+      <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex-wrap">
+        <span class="text-xs font-medium text-slate-600 shrink-0">素材名称：</span>
+        <input type="text" id="newMaterialName" placeholder="输入素材名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-2">剧名/小说名：</span>
+        <input type="text" id="newWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-2">消耗范围：</span>
+        <input type="number" id="newCostMin" placeholder="最小" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="newCostMax" placeholder="最大" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-2">创建广告数：</span>
+        <input type="number" id="newAdMin" placeholder="最少" class="px-2 py-1 text-xs rounded border border-slate-300 w-20 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="newAdMax" placeholder="最多" class="px-2 py-1 text-xs rounded border border-slate-300 w-20 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <button class="px-4 py-1 text-xs rounded bg-cyan-500 text-white font-semibold hover:bg-cyan-400 ml-auto" onclick="filterNewMaterials()">查询</button>
+        <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetNewFilter()">重置</button>
+      </div>
+      <table>
+        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="newSelectAll" onclick="toggleNewSelectAll()"></th><th class="w-8"></th><th>作品</th><th>类型</th><th>题材</th><th>评级</th><th>素材数</th><th>累计消耗</th><th>均消</th><th>CTR</th><th>ROI</th><th>CVR</th><th>是否含优质</th></tr></thead>
+        <tbody>
+          <!-- 都市重生 -->
+          <tr class="new-row" onclick="toggleNewRow('new-1')">
+            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-1" onclick="event.stopPropagation()"></td>
+            <td><span class="new-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">都市重生</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>都市男频</td><td><span class="pill grade-S">S</span></td><td>4 条</td><td>¥22,000</td><td>¥5,500</td><td>4.6%</td><td>1.76</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
+          </tr>
+          <tr id="new-1" class="new-detail hidden">
+            <td colspan="14">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-1',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-purple-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>86</td><td>3</td><td>¥6,420</td><td>5.2%</td><td>72%</td><td>1.92</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-500 to-blue-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>64</td><td>2</td><td>¥5,680</td><td>4.6%</td><td>1.78</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>42</td><td>1</td><td>¥5,400</td><td>4.2%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-indigo-500"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>28</td><td>0</td><td>¥4,500</td><td>3.8%</td><td>1.56</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 古言冷面王爷 -->
+          <tr class="new-row" onclick="toggleNewRow('new-2')">
+            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-2" onclick="event.stopPropagation()"></td>
+            <td><span class="new-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">古言冷面王爷</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>古言女频</td><td><span class="pill grade-S">S</span></td><td>3 条</td><td>¥14,600</td><td>¥4,867</td><td>4.2%</td><td>1.68</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
+          </tr>
+          <tr id="new-2" class="new-detail hidden">
+            <td colspan="14">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-2',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>62</td><td>2</td><td>¥5,620</td><td>4.6%</td><td>70%</td><td>1.82</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>48</td><td>1</td><td>¥4,980</td><td>4.0%</td><td>1.68</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td class="font-medium text-slate-700">V2 反转版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>36</td><td>0</td><td>¥4,000</td><td>3.6%</td><td>1.52</td><td>2.2%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 战神归来 -->
+          <tr class="new-row" onclick="toggleNewRow('new-3')">
+            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-3" onclick="event.stopPropagation()"></td>
+            <td><span class="new-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">战神归来</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>战神</td><td><span class="pill grade-A">A</span></td><td>3 条</td><td>¥11,200</td><td>¥3,733</td><td>4.0%</td><td>1.58</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td>
+          </tr>
+          <tr id="new-3" class="new-detail hidden">
+            <td colspan="14">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-3',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>54</td><td>1</td><td>¥4,840</td><td>4.4%</td><td>68%</td><td>1.72</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>38</td><td>1</td><td>¥3,560</td><td>3.8%</td><td>1.52</td><td>2.3%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">复仇版 V4</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>22</td><td>0</td><td>¥2,800</td><td>3.2%</td><td>1.42</td><td>2.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- 玄幻逆袭 -->
+          <tr class="new-row" onclick="toggleNewRow('new-4')">
+            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-4" onclick="event.stopPropagation()"></td>
+            <td><span class="new-arrow">▶</span></td>
+            <td class="font-semibold text-slate-700">玄幻逆袭</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>玄幻</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>¥8,200</td><td>¥4,100</td><td>4.2%</td><td>1.64</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
+          </tr>
+          <tr id="new-4" class="new-detail hidden">
+            <td colspan="14">
+              <table class="w-full text-xs ml-6">
+                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-4',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>48</td><td>0</td><td>¥4,600</td><td>4.4%</td><td>66%</td><td>1.70</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td></tr>
+                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">开服版 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>32</td><td>1</td><td>¥3,600</td><td>4.0%</td><td>1.58</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 底部操作栏 -->
+      <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+        <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+        <span class="text-xs text-slate-500">共 <span class="font-semibold text-slate-700">42</span> 条 · 每页 <span class="font-semibold text-slate-700">10</span> 条</span>
+        <div class="flex items-center gap-1">
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 border border-slate-200" disabled>‹</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs font-medium bg-cyan-500 text-white">1</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">2</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">3</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">4</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">5</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">›</button>
+        </div>
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
+        <div class="text-xs text-slate-500" id="newSelectedCount">已选 0 条素材</div>
+        <button class="py-2 px-6 text-xs bg-cyan-500 hover:bg-cyan-400 text-white rounded-lg font-semibold" style="width:220px" onclick="goCreateAd('new')">前往创建广告</button>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 已投放素材跟踪 + 消耗趋势 -->
+  <section class="px-8 pt-6 grid grid-cols-3 gap-4">
+    <div class="card p-5 col-span-2">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">我的在跑素材 · 实时表现</div>
+        <div class="text-xs text-slate-500">每 15 分钟刷新 · 最近：2 分钟前</div>
+      </div>
+      <!-- 筛选查询栏 -->
+      <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200 flex-wrap">
+        <span class="text-xs font-medium text-slate-600 shrink-0">剧名/小说名：</span>
+        <input type="text" id="runWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">消耗范围：</span>
+        <input type="number" id="runCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <span class="text-xs text-slate-400">—</span>
+        <input type="number" id="runCostMax" placeholder="最大消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        <button class="px-4 py-1 text-xs rounded bg-cyan-500 text-white font-semibold hover:bg-cyan-400 ml-auto" onclick="filterRunningMaterials()">查询</button>
+        <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetRunningFilter()">重置</button>
+      </div>
+      <table>
+        <thead><tr><th>素材</th><th>所属作品</th><th>类型</th><th>计划数</th><th>累计消耗</th><th>展示数</th><th>点击数</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>分时消耗</th><th>评级</th><th>是否为优质</th><th>生产类别</th><th>结构类型</th><th>状态 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>操作 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th></tr></thead>
+        <tbody>
+          <tr class="running-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-700"></div><span>都市重生 #2841</span></div></td>
+            <td class="text-slate-600">都市重生录</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px]">小说</span></td>
+            <td>12</td>
+            <td>¥42,680</td>
+            <td>735,862</td>
+            <td>42,680</td>
+            <td>5.8%</td>
+            <td>78%</td>
+            <td>2.18</td>
+            <td><button onclick="showHourlyChart(this)" class="text-cyan-400 hover:text-cyan-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="pill grade-S">S 95</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
+            <td><button class="text-xs text-cyan-300">复刻</button></td>
+          </tr>
+          <tr class="running-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-rose-500 to-pink-700"></div><span>古言王爷 V3</span></div></td>
+            <td class="text-slate-600">冷面王爷</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px]">短剧</span></td>
+            <td>10</td>
+            <td>¥38,420</td>
+            <td>784,082</td>
+            <td>38,420</td>
+            <td>4.9%</td>
+            <td>72%</td>
+            <td>1.92</td>
+            <td><button onclick="showHourlyChart(this)" class="text-cyan-400 hover:text-cyan-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="pill grade-S">S 91</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px]">起量</span></td>
+            <td><button class="text-xs text-cyan-300">复刻</button></td>
+          </tr>
+          <tr class="running-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-amber-500 to-orange-700"></div><span>战神短挂 V6</span></div></td>
+            <td class="text-slate-600">战神归来</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px]">小说</span></td>
+            <td>8</td>
+            <td>¥28,180</td>
+            <td>687,317</td>
+            <td>28,180</td>
+            <td>4.1%</td>
+            <td>64%</td>
+            <td>1.62</td>
+            <td><button onclick="showHourlyChart(this)" class="text-cyan-400 hover:text-cyan-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="pill grade-A">A 84</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
+            <td><button class="text-xs text-cyan-300">复刻</button></td>
+          </tr>
+          <tr class="running-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-sky-700"></div><span>豪门替嫁 V2</span></div></td>
+            <td class="text-slate-600">豪门替嫁</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px]">短剧</span></td>
+            <td>6</td>
+            <td>¥18,340</td>
+            <td>573,125</td>
+            <td>18,340</td>
+            <td>3.2%</td>
+            <td>52%</td>
+            <td>1.18</td>
+            <td><button onclick="showHourlyChart(this)" class="text-cyan-400 hover:text-cyan-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="pill grade-B">B 68</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 text-[10px]">衰退</span></td>
+            <td><button class="text-xs text-rose-300">暂停</button></td>
+          </tr>
+          <tr class="running-row">
+            <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-fuchsia-500 to-purple-700"></div><span>悬疑追凶 V1</span></div></td>
+            <td class="text-slate-600">悬疑追凶</td>
+            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px]">短剧</span></td>
+            <td>4</td>
+            <td>¥8,820</td>
+            <td>420,000</td>
+            <td>8,820</td>
+            <td>2.1%</td>
+            <td>38%</td>
+            <td>0.82</td>
+            <td><button onclick="showHourlyChart(this)" class="text-cyan-400 hover:text-cyan-300 text-sm" title="查看分时数据">📈</button></td>
+            <td><span class="pill grade-D">D 38</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td>
+            <td><span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-700 text-[10px]">归档</span></td>
+            <td><button class="text-xs text-rose-300">归档</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+        <span class="text-xs text-slate-500">共 <span class="font-semibold text-slate-700">28</span> 条 · 每页 <span class="font-semibold text-slate-700">10</span> 条</span>
+        <div class="flex items-center gap-1">
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-400 border border-slate-200" disabled>‹</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs font-medium bg-cyan-500 text-white">1</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">2</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">3</button>
+          <button class="w-7 h-7 flex items-center justify-center rounded text-xs text-slate-500 hover:bg-slate-100 border border-slate-200">›</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">📈 消耗趋势</div>
+        <div class="flex gap-1" id="trendTabs">
+          <button onclick="switchTrend('week')" class="trend-tab px-2.5 py-1 rounded text-[11px] font-medium bg-cyan-500/20 text-cyan-300 border border-cyan-500/30" data-tab="week">周</button>
+          <button onclick="switchTrend('14d')" class="trend-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-tab="14d">14日</button>
+          <button onclick="switchTrend('month')" class="trend-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-tab="month">月</button>
+        </div>
+      </div>
+      <canvas id="costTrendChart" height="200"></canvas>
+      <div class="mt-2 text-[10px] text-slate-400 text-center">我的在跑素材总消耗趋势</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ====== 导出报表 & 保存PDF ======
+function exportReport(){ alert('正在导出报表，请稍候...'); }
+function savePDF(){
+  const btn = event.currentTarget;
+  btn.disabled = true; btn.textContent = '⏳ 生成中...';
+  const main = document.querySelector('main') || document.body;
+  html2canvas(main, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+    const { jsPDF } = window.jspdf;
+    const imgW = canvas.width, imgH = canvas.height;
+    const pdfW = 595.28, pdfH = pdfW * imgH / imgW;
+    const pdf = new jsPDF({ orientation: imgH > imgW ? 'p' : 'l', unit: 'pt', format: [pdfW, pdfH] });
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
+    pdf.save(document.title.replace(/[·\s]+/g, '_') + '.pdf');
+  }).finally(() => { btn.disabled = false; btn.textContent = '📄 保存页面为PDF'; });
+}
+
+// ====== 媒体维度切换 ======
+function switchMedia(tab) {
+  document.querySelectorAll('#mediaTabs .media-tab').forEach(b => {
+    if (b.dataset.tab === tab) b.className = 'media-tab px-3 py-1.5 rounded text-xs font-medium bg-cyan-500/30 text-cyan-200 border border-cyan-400/40';
+    else b.className = 'media-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
+  });
+}
+
+// ====== 作品类型维度切换 ======
+function switchType(tab) {
+  document.querySelectorAll('#typeTabs .type-tab').forEach(b => {
+    if (b.dataset.tab === tab) b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium bg-cyan-500/30 text-cyan-200 border border-cyan-400/40';
+    else b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
+  });
+}
+
+// ====== 业务线维度切换 ======
+function switchBiz(val) {
+  const el = document.getElementById('bizSelect');
+  if (el) el.value = val;
+}
+
+// ====== 分时消耗弹窗 ======
+function showHourlyChart(btn) {
+  const row = btn.closest('tr');
+  const name = row.querySelector('span')?.textContent || '素材';
+  const overlay = document.createElement('div');
+  overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `
+    <div class="bg-white rounded-xl p-6 w-[600px] max-h-[80vh] overflow-auto shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-sm font-semibold text-slate-700">📈 ${name} · 分时消耗</div>
+        <button onclick="this.closest('.fixed').remove()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+      <canvas id="hourlyChart" height="200"></canvas>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => {
+    const ctx = document.getElementById('hourlyChart');
+    if (!ctx) return;
+    const hours = Array.from({length:24}, (_,i) => i+':00');
+    const data = hours.map(() => Math.floor(Math.random()*800+200));
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: hours,
+        datasets: [{ label: '消耗(元)', data: data, borderColor: '#06b6d4', backgroundColor: 'rgba(6,182,212,.1)', fill: true, tension: .3, pointRadius: 2 }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { font: { size: 9 }, maxTicksLimit: 12 } }, y: { ticks: { font: { size: 9 } } } }
+      }
+    });
+  }, 100);
+}
+
+// ====== 星标素材筛选 ======
+function filterStarMaterials(){
+  const workName = document.getElementById('starWorkName')?.value.trim().toLowerCase() || '';
+  const minCost = parseFloat(document.getElementById('starCostMin')?.value) || 0;
+  const maxCost = parseFloat(document.getElementById('starCostMax')?.value) || Infinity;
+  document.querySelectorAll('.star-row').forEach(row => {
+    const name = row.textContent.toLowerCase();
+    const costText = row.textContent.match(/¥([d,]+)/);
+    const cost = costText ? parseFloat(costText[1].replace(/,/g,'')) : 0;
+    const matchName = !workName || name.includes(workName);
+    const matchCost = cost >= minCost && cost <= maxCost;
+    row.style.display = (matchName && matchCost) ? '' : 'none';
+  });
+}
+function resetStarFilter(){
+  const el1 = document.getElementById('starWorkName'); if(el1) el1.value='';
+  const el2 = document.getElementById('starCostMin'); if(el2) el2.value='';
+  const el3 = document.getElementById('starCostMax'); if(el3) el3.value='';
+  document.querySelectorAll('.star-row').forEach(r => r.style.display='');
+}
+
+// ====== 大盘优质素材筛选 ======
+function filterTopMaterials(){
+  const minCost=parseFloat(document.getElementById('topCostMin').value)||0;
+  const maxCost=parseFloat(document.getElementById('topCostMax').value)||Infinity;
+  const workName=document.getElementById('topWorkName').value.trim().toLowerCase();
+  const structFilter=document.getElementById('topStructFilter')?.value||'';
+  let visibleCount=0;
+  document.querySelectorAll('.top-row').forEach(row=>{
+    const costText=row.querySelector('td:nth-child(10)').textContent;
+    const cost=parseFloat(costText.replace(/[¥,]/g,''));
+    const workText=row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+    const structTd=row.querySelector('td:nth-child(18)');
+    const structText=structTd?structTd.textContent.trim():'';
+    const costMatch=cost>=minCost&&cost<=maxCost;
+    const workMatch=!workName||workText.includes(workName);
+    const structMatch=!structFilter||structText.includes(structFilter);
+    if(costMatch&&workMatch&&structMatch){row.classList.remove('hidden');visibleCount++;}
+    else{row.classList.add('hidden');row.querySelector('.top-item').checked=false;}
+  });
+  document.getElementById('topSelectedCount').textContent='已选 0 条素材（显示 '+visibleCount+' 条）';
+}
+function resetTopFilter(){
+  document.getElementById('topCostMin').value='';
+  document.getElementById('topCostMax').value='';
+  document.getElementById('topWorkName').value='';
+  document.querySelectorAll('.top-row').forEach(row=>{row.classList.remove('hidden');});
+  const total=document.querySelectorAll('.top-row').length;
+  document.getElementById('topSelectedCount').textContent='已选 0 条素材（显示 '+total+' 条）';
+}
+
+// ====== 大盘优质素材勾选 ======
+function toggleTopSelectAll(){
+  const checked=document.getElementById('topSelectAll').checked;
+  document.querySelectorAll('.top-item').forEach(c=>c.checked=checked);
+  updateTopCount();
+}
+function updateTopCount(){
+  const n=document.querySelectorAll('.top-item:checked').length;
+  const total=document.querySelectorAll('.top-row:not(.hidden)').length;
+  document.getElementById('topSelectedCount').textContent='已选 '+n+' 条素材（显示 '+total+' 条）';
+}
+document.querySelectorAll('.top-item').forEach(c=>{
+  c.addEventListener('change',updateTopCount);
+});
+
+// ====== 星标素材折叠切换 ======
+function toggleStarRow(id){
+  const row=document.getElementById(id);
+  const arrow=row.previousElementSibling.querySelector('.star-arrow');
+  if(row.classList.contains('hidden')){row.classList.remove('hidden');if(arrow)arrow.textContent='▼';}
+  else{row.classList.add('hidden');if(arrow)arrow.textContent='▶';}
+}
+function toggleStarSelectAll(){
+  const checked=document.getElementById('starSelectAll').checked;
+  document.querySelectorAll('.star-check,.star-item').forEach(c=>c.checked=checked);
+  updateStarCount();
+}
+function toggleGroupCheck(group,el){
+  const checked=el.checked;
+  document.querySelectorAll(`[data-group="${group}"].star-item`).forEach(c=>c.checked=checked);
+  const mainCb=document.querySelector(`.star-check[data-group="${group}"]`);
+  if(mainCb)mainCb.checked=checked;
+  updateStarCount();
+}
+function updateStarCount(){
+  const n=document.querySelectorAll('.star-item:checked').length;
+  document.getElementById('starSelectedCount').textContent='已选 '+n+' 条素材';
+}
+document.querySelectorAll('.star-check,.star-item').forEach(c=>{
+  c.addEventListener('change',function(){
+    if(this.classList.contains('star-check')){
+      const g=this.dataset.group;
+      document.querySelectorAll(`[data-group="${g}"].star-item`).forEach(x=>x.checked=this.checked);
+    }
+    updateStarCount();
+  });
+});
+
+// ====== 今日新素材折叠切换 ======
+function toggleNewRow(id){
+  const row=document.getElementById(id);
+  const arrow=row.previousElementSibling.querySelector('.new-arrow');
+  if(row.classList.contains('hidden')){row.classList.remove('hidden');if(arrow)arrow.textContent='▼';}
+  else{row.classList.add('hidden');if(arrow)arrow.textContent='▶';}
+}
+function toggleNewSelectAll(){
+  const checked=document.getElementById('newSelectAll').checked;
+  document.querySelectorAll('.new-check,.new-item').forEach(c=>c.checked=checked);
+  updateNewCount();
+}
+function updateNewCount(){
+  const n=document.querySelectorAll('.new-item:checked').length;
+  document.getElementById('newSelectedCount').textContent='已选 '+n+' 条素材';
+}
+document.querySelectorAll('.new-check,.new-item').forEach(c=>{
+  c.addEventListener('change',function(){
+    if(this.classList.contains('new-check')){
+      const g=this.dataset.group;
+      document.querySelectorAll(`[data-group="${g}"].new-item`).forEach(x=>x.checked=this.checked);
+    }
+    updateNewCount();
+  });
+});
+// ====== 只看今日切换 ======
+let todayOnlyMode = false;
+function toggleTodayOnly(btn){
+  todayOnlyMode = !todayOnlyMode;
+  if(todayOnlyMode){
+    btn.className = 'px-3 py-1 text-xs rounded bg-cyan-500 text-white border border-cyan-500 hover:bg-cyan-400 font-medium';
+    btn.textContent = '只看今日 ✓';
+  } else {
+    btn.className = 'px-3 py-1 text-xs rounded bg-cyan-50 text-cyan-600 border border-cyan-200 hover:bg-cyan-100 font-medium';
+    btn.textContent = '只看今日';
+  }
+}
+
+function filterNewMaterials(){
+  const workName=document.getElementById('newWorkName').value.trim().toLowerCase();
+  const rows=document.querySelectorAll('.new-row');
+  rows.forEach(row=>{
+    const id=row.nextElementSibling.id;
+    const detail=document.getElementById(id);
+    const workText=row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+    const match=!workName||workText.includes(workName);
+    if(match){row.classList.remove('hidden');if(detail)detail.classList.remove('hidden');}
+    else{row.classList.add('hidden');if(detail){detail.classList.add('hidden');const arrow=row.querySelector('.new-arrow');if(arrow)arrow.textContent='▶';}
+      row.querySelector('.new-check').checked=false;
+      row.querySelectorAll('.new-item').forEach(x=>x.checked=false);
+    }
+  });
+  updateNewCount();
+}
+function resetNewFilter(){
+  document.getElementById('newWorkName').value='';
+  document.querySelectorAll('.new-row').forEach(row=>{row.classList.remove('hidden');});
+  document.querySelectorAll('.new-detail').forEach(d=>d.classList.add('hidden'));
+  document.querySelectorAll('.new-arrow').forEach(a=>a.textContent='▶');
+  updateNewCount();
+}
+
+// ====== 折叠/展开功能 ======
+function toggleSection(id, btn){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? '' : 'none';
+  btn.textContent = isHidden ? '▲' : '▼';
+}
+
+// ====== 在跑素材筛选 ======
+function filterRunningMaterials(){
+  const workName = document.getElementById('runWorkName').value.trim().toLowerCase();
+  const costMin = parseFloat(document.getElementById('runCostMin').value) || 0;
+  const costMax = parseFloat(document.getElementById('runCostMax').value) || Infinity;
+  document.querySelectorAll('.running-row').forEach(row => {
+    const tds = row.querySelectorAll('td');
+    const work = tds[1]?.textContent.trim().toLowerCase() || '';
+    const costStr = tds[4]?.textContent.replace(/[¥,]/g,'') || '0';
+    const cost = parseFloat(costStr) || 0;
+    const matchWork = !workName || work.includes(workName);
+    const matchCost = cost >= costMin && cost <= costMax;
+    if(matchWork && matchCost) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+  });
+}
+function resetRunningFilter(){
+  document.getElementById('runWorkName').value='';
+  document.getElementById('runCostMin').value='';
+  document.getElementById('runCostMax').value='';
+  document.querySelectorAll('.running-row').forEach(row=>{row.classList.remove('hidden');});
+}
+
+function goCreateAd(section){
+  const prefix=section==='star'?'star':'new';
+  const checked=document.querySelectorAll(`.${prefix}-item:checked`).length;
+  if(checked===0){alert('请先勾选要使用的素材');return;}
+  alert('已选择 '+checked+' 条素材，前往创建广告');
+}
+// ====== 分类筛选逻辑 ======
+function switchFilter(dim,val,btn){
+  const cls=dim==='type'?'filter-type':'filter-genre';
+  const activeStyle='px-3 py-1.5 rounded text-xs font-medium bg-cyan-500/30 text-cyan-200 border border-cyan-400/40';
+  const inactiveStyle='px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
+  document.querySelectorAll('.'+cls).forEach(b=>b.className=cls+' '+inactiveStyle);
+  btn.className=cls+' '+activeStyle;
+  const typeEl=document.querySelector('.filter-type[class*="bg-cyan"]');
+  const genreEl=document.querySelector('.filter-genre[class*="bg-cyan"]');
+  document.getElementById('filterStatus').textContent='当前：'+(typeEl?typeEl.textContent:'全部')+' · '+(genreEl?genreEl.textContent:'全部');
+}
+
+// ====== 时间维度切换 ======
+const kpiData = {
+  today: { label:'2026-05-23 · 截至当前时刻', items:[
+    {title:'今日上新素材数',value:'24',change:'▲ 20%',positive:true,yVal:'昨日 20'},
+    {title:'今日创建广告数',value:'18',change:'▲ 28.6%',positive:true,yVal:'昨日 14'},
+    {title:'今日消耗',value:'¥ 2.8万',change:'▲ 18%',positive:true,yVal:'昨日 ¥3.6万'},
+    {title:'今日 ROI',value:'1.88',change:'▲ 6.8%',positive:true,yVal:'昨日 1.76'}
+  ]},
+  week: { label:'2026-05-19 ~ 05-23 · 本周累计', items:[
+    {title:'本周上新素材数',value:'126',change:'▲ 15% vs 上周 110',positive:true},
+    {title:'本周创建广告数',value:'86',change:'▲ 12% vs 上周 77',positive:true},
+    {title:'本周消耗',value:'¥ 18.4万',change:'团队第 1',positive:true},
+    {title:'本周 ROI',value:'1.82',change:'达标线 1.0',positive:true}
+  ]},
+  month: { label:'2026-05-01 ~ 05-23 · 本月累计', items:[
+    {title:'本月上新素材数',value:'486',change:'▲ 20% vs 上月同期',positive:true},
+    {title:'本月创建广告数',value:'342',change:'▲ 18% vs 上月同期',positive:true},
+    {title:'本月消耗',value:'¥ 68.2万',change:'▲ 22% vs 上月同期',positive:true},
+    {title:'本月 ROI',value:'1.78',change:'▲ 0.14 vs 上月 1.64',positive:true}
+  ]},
+  year: { label:'2026-01-01 ~ 05-23 · 年度累计', items:[
+    {title:'年度上新素材数',value:'2,460',change:'▲ 24% vs 去年同期',positive:true},
+    {title:'年度创建广告数',value:'1,648',change:'▲ 26% vs 去年同期',positive:true},
+    {title:'年度消耗',value:'¥ 286万',change:'▲ 34% vs 去年同期',positive:true},
+    {title:'年度 ROI',value:'1.68',change:'▲ 0.22 vs 去年 1.46',positive:true}
+  ]},
+  custom: { label:'自定义日期范围', items:[
+    {title:'区间上新素材数',value:'—',change:'选择日期后加载',positive:null},
+    {title:'区间创建广告数',value:'—',change:'选择日期后加载',positive:null},
+    {title:'区间消耗',value:'—',change:'选择日期后加载',positive:null},
+    {title:'区间 ROI',value:'—',change:'选择日期后加载',positive:null}
+  ]}
+};
+function renderKPI(p){
+  const d=kpiData[p];
+  document.getElementById('timeLabel').textContent=d.label;
+  document.getElementById('customRange').style.display=p==='custom'?'flex':'none';
+  document.getElementById('kpiPanel').innerHTML=d.items.map(it=>{
+    const cc=it.positive===true?'text-emerald-400':it.positive===false?'text-rose-400':'text-slate-400';
+    const yLine=it.yVal?`<div class="text-[10px] text-slate-400 mt-0.5">${it.yVal} · <span class="${cc}">${it.change}</span></div>`:`<div class="text-[11px] ${cc} mt-1">${it.change}</div>`;
+    return `<div class="card kpi p-4"><div class="text-[11px] text-slate-400">${it.title}</div><div class="text-2xl font-bold mt-1">${it.value}</div>${yLine}</div>`;
+  }).join('');
+}
+function switchTime(p){
+  document.querySelectorAll('.time-tab').forEach(b=>{
+    b.className=b.dataset.tab===p?'time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all bg-cyan-500/30 text-cyan-200 border border-cyan-400/40':'time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white';
+  });
+  renderKPI(p);
+}
+renderKPI('today');
+
+// ====== 消耗趋势图 ======
+const trendData = {
+  week: {labels:['周一','周二','周三','周四','周五','周六','周日'],data:[18200,22400,19600,24800,28000,26200,22580]},
+  '14d': {labels:['5/10','5/11','5/12','5/13','5/14','5/15','5/16','5/17','5/18','5/19','5/20','5/21','5/22','5/23'],data:[16800,18200,20400,19600,22400,24800,21200,19600,24800,26200,28000,25400,23800,22580]},
+  month: {labels:['5/1','5/3','5/5','5/7','5/9','5/11','5/13','5/15','5/17','5/19','5/21','5/23'],data:[12400,14600,16800,18200,20400,22400,24800,21200,24800,26200,28000,22580]}
+};
+let costTrendChart = new Chart(document.getElementById('costTrendChart'),{
+  type:'line',
+  data:{labels:trendData.week.labels,datasets:[
+    {label:'消耗(元)',data:trendData.week.data,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,.15)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#06b6d4'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'¥'+ctx.parsed.y.toLocaleString()}}},
+    scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#64748b',font:{size:9},callback:v=>'¥'+(v/10000).toFixed(1)+'万'},grid:{color:'rgba(148,163,184,.08)'}}}}
+});
+function switchTrend(dim){
+  document.querySelectorAll('.trend-tab').forEach(b=>{
+    b.className=b.dataset.tab===dim?'trend-tab px-2.5 py-1 rounded text-[11px] font-medium bg-cyan-500/20 text-cyan-300 border border-cyan-500/30':'trend-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400';
+  });
+  const d=trendData[dim];
+  costTrendChart.data.labels=d.labels;
+  costTrendChart.data.datasets[0].data=d.data;
+  costTrendChart.update();
+}
+
+// ====== 大盘分天消耗弹窗 ======
+function showTopDailyChart(btn) {
+  const row = btn.closest('tr');
+  const name = row.querySelector('td:nth-child(3)')?.textContent.trim() || '素材';
+  const overlay = document.createElement('div');
+  overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `
+    <div class="bg-white rounded-xl p-6 w-[600px] max-h-[80vh] overflow-auto shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-sm font-semibold text-slate-700">📈 ${name} · 分天消耗（近7日）</div>
+        <button onclick="this.closest('.fixed').remove()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+      <canvas id="topDailyChart" height="200"></canvas>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => {
+    const ctx = document.getElementById('topDailyChart');
+    if (!ctx) return;
+    const days = ['06-02','06-03','06-04','06-05','06-06','06-07','06-08'];
+    const data = days.map(() => Math.floor(Math.random()*3000+1000));
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [{ label: '消耗(元)', data: data, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.1)', fill: true, tension: .3, pointRadius: 3 }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { font: { size: 10 } } }, y: { ticks: { font: { size: 10 } } } }
+      }
+    });
+  }, 100);
+}
+
+// ====== 大盘分时消耗弹窗 ======
+function showTopHourlyChart(btn) {
+  const row = btn.closest('tr');
+  const name = row.querySelector('td:nth-child(3)')?.textContent.trim() || '素材';
+  const overlay = document.createElement('div');
+  overlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+  overlay.onclick = (e) => { if(e.target===overlay) overlay.remove(); };
+  overlay.innerHTML = `
+    <div class="bg-white rounded-xl p-6 w-[600px] max-h-[80vh] overflow-auto shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <div class="text-sm font-semibold text-slate-700">📈 ${name} · 分时消耗（今日）</div>
+        <button onclick="this.closest('.fixed').remove()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+      <canvas id="topHourlyChart" height="200"></canvas>
+    </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => {
+    const ctx = document.getElementById('topHourlyChart');
+    if (!ctx) return;
+    const hours = Array.from({length:24}, (_,i) => i+':00');
+    const data = hours.map(() => Math.floor(Math.random()*800+100));
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: hours,
+        datasets: [{ label: '消耗(元)', data: data, borderColor: '#06b6d4', backgroundColor: 'rgba(6,182,212,.1)', fill: true, tension: .3, pointRadius: 2 }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { font: { size: 9 }, maxTicksLimit: 12 } }, y: { ticks: { font: { size: 9 } } } }
+      }
+    });
+  }, 100);
+}
+
+</script>
+</body>
+</html>

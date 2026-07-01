@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>系统管理员 · 健康与权限</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;color:#1e293b;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .kpi{background:#ffffff;}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;color:#64748b;font-size:13px;}
+  .sidebar a.active{background:#f1f5f9;color:#334155;border-left:3px solid #64748b;}
+  .sidebar a:hover{color:#1e293b;background:#f8fafc;}
+  .pill{padding:2px 8px;border-radius:999px;font-size:11px;}
+  .ok{background:#d1fae5;color:#065f46;}
+  .warn{background:#fef3c7;color:#92400e;}
+  .err{background:#fee2e2;color:#991b1b;}
+  table{width:100%;font-size:13px;}
+  th{text-align:left;font-weight:500;color:#64748b;padding:10px 8px;border-bottom:1px solid #e2e8f0;}
+  td{padding:10px 8px;border-bottom:1px solid #f1f5f9;color:#334155;}
+  .perm-yes{color:#059669;}
+  .perm-no{color:#cbd5e1;}
+  .perm-partial{color:#d97706;}
+  input[type=range]{accent-color:#6366f1;}
+  canvas{max-height:500px;}
+
+  /* === Light Flat Overrides === */
+  aside{background:#ffffff !important;border-color:#e2e8f0 !important;}
+  aside .text-sm, aside .text-\[11px\]{color:#64748b !important;}
+  aside .font-semibold{color:#1e293b !important;}
+  header{border-color:#e2e8f0 !important;}
+  [class*="bg-slate-950"]{background-color:#ffffff !important;}
+  [class*="bg-slate-900"]{background-color:#f8fafc !important;}
+  [class*="bg-slate-800"]{background-color:#e2e8f0 !important;}
+  [class*="border-slate-800"],[class*="border-slate-700"]{border-color:#e2e8f0 !important;}
+  [class*="text-white"]{color:#1e293b !important;}
+  [class*="text-slate-300"]{color:#475569 !important;}
+  [class*="text-slate-400"]{color:#64748b !important;}
+  [class*="text-slate-500"]{color:#94a3b8 !important;}
+  [class*="text-slate-200"]{color:#334155 !important;}
+  [class*="text-emerald-300"],[class*="text-emerald-400"]{color:#059669 !important;}
+  [class*="text-cyan-300"]{color:#0891b2 !important;}
+  [class*="text-indigo-300"]{color:#4f46e5 !important;}
+  [class*="text-amber-300"]{color:#d97706 !important;}
+  [class*="text-rose-300"],[class*="text-rose-400"]{color:#e11d48 !important;}
+  [class*="text-blue-300"]{color:#2563eb !important;}
+  [class*="text-purple-300"]{color:#7c3aed !important;}
+  [class*="bg-slate-500\/3"]{background-color:rgba(100,116,139,.08) !important;}
+  [class*="bg-slate-600"]{background-color:#e2e8f0 !important;}
+  [class*="border-slate-400"]{border-color:#cbd5e1 !important;}
+  [class*="bg-emerald-500\/2"]{background-color:rgba(16,185,129,.06) !important;}
+  [class*="bg-rose-500\/1"]{background-color:rgba(244,63,94,.06) !important;}
+  [class*="bg-amber-500\/1"]{background-color:rgba(245,158,11,.08) !important;}
+  [class*="bg-indigo-500\/1"]{background-color:rgba(99,102,241,.06) !important;}
+  [class*="border-rose-500"]{border-color:#fecaca !important;}
+  [class*="border-amber-500"]{border-color:#fde68a !important;}
+  [class*="border-indigo-500"]{border-color:#c7d2fe !important;}
+  [class*="border-blue-500"]{border-color:#bfdbfe !important;}
+  [class*="border-purple-500"]{border-color:#ddd6fe !important;}
+  .filter-type,.filter-genre,.time-tab{transition:all .15s;}
+  .sidebar .nav-link.active{background:rgba(100,116,139,.15) !important;color:#94a3b8 !important;border-left:3px solid #94a3b8;}
+  .sidebar .nav-link:hover{color:#e2e8f0 !important;background:rgba(255,255,255,.05) !important;}
+</style>
+</head>
+<body class="min-h-screen flex">
+
+<aside class="w-60 shrink-0 bg-slate-950 border-r border-slate-800 flex flex-col">
+  <div class="p-5 border-b border-slate-800 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-400 to-zinc-500 flex items-center justify-center font-bold text-sm">MC</div>
+    <div><div class="text-sm font-semibold">素材中台</div><div class="text-[11px] text-slate-500">系统控制台</div></div>
+  </div>
+  <nav class="sidebar px-3 space-y-1 flex-1">
+    <a href="index.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">首页</a>
+    <a href="boss.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">管理者素材一览</a>
+    <a href="optimizer-team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化团队负责人素材盯盘</a>
+    <a href="team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化组长素材盯盘</a>
+    <a href="optimizer.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">优化师素材盯盘</a>
+    <a href="material-team-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材团队负责人素材盯盘</a>
+    <a href="material-lead.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材组长工作台</a>
+    <a href="designer.html" class="nav-link px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white">素材师工作台</a>
+    <a href="admin.html" class="nav-link active px-3 py-2 rounded-lg text-xs font-medium">系统管理员监控平台</a>
+  </nav>
+  <div class="p-4 border-t border-slate-800 flex items-center gap-3">
+    <div class="w-8 h-8 rounded-full bg-slate-500/30 flex items-center justify-center text-sm">🛡️</div>
+    <div><div class="text-sm">admin</div><div class="text-[11px] text-slate-500">超级管理员</div></div>
+  </div>
+</aside>
+
+<main class="flex-1 overflow-x-hidden">
+  <header class="px-8 py-4 flex items-center justify-between border-b border-slate-800/70">
+    <div>
+      <div class="text-xs text-slate-500">系统健康 · 全部服务在线</div>
+      <h1 class="text-xl font-semibold mt-0.5">系统控制台</h1>
+    </div>
+    <div class="flex items-center gap-3 text-xs">
+      <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">●  API 200ms</span>
+      <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300">●  数据延迟 35s</span>
+      <button class="px-3 py-1.5 bg-slate-800 rounded">🔧 维护模式</button>
+    </div>
+  </header>
+
+  <!-- 时间维度切换 + KPI -->
+  <section class="px-8 pt-6">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex bg-slate-900/80 border border-slate-800 rounded-xl p-1 gap-0.5" id="timeTabs">
+        <button onclick="switchTime('today')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all bg-slate-500/30 text-slate-200 border border-slate-400/40" data-tab="today">今日</button>
+        <button onclick="switchTime('week')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="week">本周</button>
+        <button onclick="switchTime('month')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="month">本月</button>
+        <button onclick="switchTime('year')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="year">年度</button>
+        <button onclick="switchTime('custom')" class="time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white" data-tab="custom">自定义</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <div id="customRange" class="hidden items-center gap-2">
+          <input type="date" value="2026-05-01" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300">
+          <span class="text-slate-500 text-xs">至</span>
+          <input type="date" value="2026-05-23" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300">
+          <button class="px-2 py-1 bg-slate-600 rounded text-xs">查询</button>
+        </div>
+        <div class="text-xs text-slate-500" id="timeLabel">2026-05-23 · 截至当前时刻</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-6 gap-4" id="kpiPanel"></div>
+  </section>
+
+
+
+  <!-- 接口监控 + 封控预警 -->
+  <section class="px-8 pt-6 grid grid-cols-3 gap-4">
+    <div class="card p-5 col-span-2">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">📈 核心接口响应时延 · 24h</div>
+        <div class="text-xs text-slate-500">P99 阈值：500ms · <span class="text-blue-300">蓝=小说接口</span> <span class="text-purple-300">紫=短剧接口</span> <span class="text-amber-300">金=通用</span></div>
+      </div>
+      <canvas id="apiChart" height="110"></canvas>
+    </div>
+    <div class="card p-5">
+      <div class="text-sm font-semibold mb-3">🚨 系统封控预警</div>
+      <div class="text-xs text-slate-400 mb-3">异常操作提示 · 异常数据报警</div>
+      <!-- 异常操作提示 -->
+      <div class="space-y-2 mb-4">
+        <div class="flex items-start gap-2 p-2 rounded bg-rose-500/10 border border-rose-500/20">
+          <span class="text-rose-400 text-[10px] shrink-0 mt-0.5">⛔</span>
+          <div class="text-[11px]">
+            <div class="text-rose-300 font-medium">高频批量下载</div>
+            <div class="text-slate-400 mt-0.5">优化师 wangming 在 5 分钟内下载素材 286 条，超出正常阈值 3 倍</div>
+            <div class="text-slate-500 mt-0.5">10:32 · 自动封禁 30 分钟</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-2 p-2 rounded bg-amber-500/10 border border-amber-500/20">
+          <span class="text-amber-400 text-[10px] shrink-0 mt-0.5">⚠️</span>
+          <div class="text-[11px]">
+            <div class="text-amber-300 font-medium">越权操作尝试</div>
+            <div class="text-slate-400 mt-0.5">设计师 suqing 尝试访问素材组长审批面板，已被系统拦截</div>
+            <div class="text-slate-500 mt-0.5">10:28 · 已记录日志</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-2 p-2 rounded bg-amber-500/10 border border-amber-500/20">
+          <span class="text-amber-400 text-[10px] shrink-0 mt-0.5">⚠️</span>
+          <div class="text-[11px]">
+            <div class="text-amber-300 font-medium">异常登录行为</div>
+            <div class="text-slate-400 mt-0.5">账号 linjie 从陌生 IP（203.156.12.8）登录，地理位置：境外</div>
+            <div class="text-slate-500 mt-0.5">09:45 · 已触发二次验证</div>
+          </div>
+        </div>
+      </div>
+      <!-- 异常数据报警 -->
+      <div class="border-t border-slate-700/30 pt-3">
+        <div class="text-[11px] font-semibold text-slate-300 mb-2">异常数据报警</div>
+        <div class="space-y-2">
+          <div class="flex items-start gap-2 p-2 rounded bg-orange-500/10 border border-orange-500/20">
+            <span class="text-orange-400 text-[10px] shrink-0 mt-0.5">📊</span>
+            <div class="text-[11px]">
+              <div class="text-orange-300 font-medium">消耗数据突变</div>
+              <div class="text-slate-400 mt-0.5">B 团队今日消耗 ¥12.8 万，较昨日同期下降 62%，偏离正常区间</div>
+              <div class="text-slate-500 mt-0.5">10:40 · 建议检查广告账户余额</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-2 p-2 rounded bg-orange-500/10 border border-orange-500/20">
+            <span class="text-orange-400 text-[10px] shrink-0 mt-0.5">📊</span>
+            <div class="text-[11px]">
+              <div class="text-orange-300 font-medium">质检通过率异常</div>
+              <div class="text-slate-400 mt-0.5">D 组今日质检通过率 78%，低于基准线 92% 达 14pp</div>
+              <div class="text-slate-500 mt-0.5">10:35 · 建议复核质检标准一致性</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-2 p-2 rounded bg-slate-600/10 border border-slate-500/20">
+            <span class="text-slate-400 text-[10px] shrink-0 mt-0.5">ℹ️</span>
+            <div class="text-[11px]">
+              <div class="text-slate-300 font-medium">模板引用突增</div>
+              <div class="text-slate-400 mt-0.5">模板"冷面王爷 V3"今日被引用 186 次，超均值 4.2 倍</div>
+              <div class="text-slate-500 mt-0.5">10:20 · 观察中，暂未触发限流</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 数据源 + 告警 -->
+  <section class="px-8 pt-6 grid grid-cols-3 gap-4">
+    <div class="card p-5 col-span-2">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">🔌 数据源接入状态</div>
+        <button class="text-xs text-indigo-300">+ 新增接入</button>
+      </div>
+      <table>
+        <thead><tr><th>数据源</th><th>类型</th><th>覆盖类型</th><th>状态</th><th>最后同步</th><th>本日记录</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>巨量引擎 Open API</td><td>广告投放回流</td><td><span class="text-blue-300 text-[10px]">小说</span>+<span class="text-purple-300 text-[10px]">短剧</span></td><td><span class="pill ok">● 在线</span></td><td>30 秒前</td><td>284,612</td><td><button class="text-xs text-indigo-300">配置</button></td></tr>
+          <tr><td>磁力金牛 Open API</td><td>广告投放回流</td><td><span class="text-blue-300 text-[10px]">小说</span>+<span class="text-purple-300 text-[10px]">短剧</span></td><td><span class="pill ok">● 在线</span></td><td>42 秒前</td><td>96,420</td><td><button class="text-xs text-indigo-300">配置</button></td></tr>
+          <tr><td>腾讯广告 Marketing API</td><td>广告投放回流</td><td><span class="text-blue-300 text-[10px]">小说</span>+<span class="text-purple-300 text-[10px]">短剧</span></td><td><span class="pill ok">● 在线</span></td><td>38 秒前</td><td>72,180</td><td><button class="text-xs text-indigo-300">配置</button></td></tr>
+          <tr><td>快手聚星 Open API</td><td>广告投放回流</td><td><span class="text-purple-300 text-[10px]">短剧为主</span></td><td><span class="pill warn">● 延迟</span></td><td>3 分钟前</td><td>48,930</td><td><button class="text-xs text-indigo-300">重连</button></td></tr>
+          <tr><td>素材生成集群</td><td>素材生产</td><td><span class="text-blue-300 text-[10px]">小说</span>+<span class="text-purple-300 text-[10px]">短剧</span></td><td><span class="pill ok">● 在线</span></td><td>实时</td><td>2,847</td><td><button class="text-xs text-indigo-300">监控</button></td></tr>
+          <tr><td>企微机器人</td><td>通知推送</td><td>全类型</td><td><span class="pill ok">● 在线</span></td><td>15 秒前</td><td>1,284 条</td><td><button class="text-xs text-indigo-300">配置</button></td></tr>
+          <tr><td>对象存储 OSS</td><td>素材存储</td><td>全类型</td><td><span class="pill ok">● 在线</span></td><td>实时</td><td>42TB</td><td><button class="text-xs text-indigo-300">扩容</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card p-5">
+      <div class="text-sm font-semibold mb-3">🚨 告警事件</div>
+      <div class="space-y-3">
+        <div class="rounded-lg p-3 bg-rose-500/10 border border-rose-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">数据库慢查询激增</div><span class="pill err">严重</span></div>
+          <div class="text-[11px] text-slate-400 mt-1">material_score 表 P99 > 800ms · 触发于 12 分钟前</div>
+          <div class="mt-2 flex gap-2 text-xs"><button class="text-indigo-300">查看</button><button class="text-slate-400">忽略</button></div>
+        </div>
+        <div class="rounded-lg p-3 bg-amber-500/10 border border-amber-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">快手回流延迟 > 2 分钟</div><span class="pill warn">警告</span></div>
+          <div class="text-[11px] text-slate-400 mt-1">API 调用 99% 成功，可能为对方限流</div>
+        </div>
+        <div class="rounded-lg p-3 bg-amber-500/10 border border-amber-500/30">
+          <div class="flex items-center justify-between"><div class="text-sm">存储用量达 68%</div><span class="pill warn">警告</span></div>
+          <div class="text-[11px] text-slate-400 mt-1">建议本月扩容 20TB 或归档 30 天前素材</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 权限矩阵 -->
+  <section class="px-8 pt-6">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm font-semibold">🔑 角色权限矩阵 (RBAC)</div>
+          <div class="text-xs text-slate-500 mt-0.5">可在此调整角色对各模块的可见性与操作权限</div>
+        </div>
+        <button class="px-3 py-1.5 text-xs bg-indigo-500 rounded">+ 新增角色</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>模块 / 角色</th>
+            <th class="text-center">👑 老板</th>
+            <th class="text-center">🎯 团队负责人</th>
+            <th class="text-center">⚙️ 优化师</th>
+            <th class="text-center">🎬 素材组长</th>
+            <th class="text-center">🎨 设计师</th>
+            <th class="text-center">🛡️ 管理员</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>全公司经营大盘</td><td class="text-center perm-yes">全量</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-partial">只读</td></tr>
+          <tr><td>团队 ROI 对比</td><td class="text-center perm-yes">全团队</td><td class="text-center perm-yes">本团队</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-partial">只读</td></tr>
+          <tr><td>个人素材表现</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">成员可见</td><td class="text-center perm-yes">本人</td><td class="text-center perm-yes">组成员</td><td class="text-center perm-yes">本人</td><td class="text-center perm-no">—</td></tr>
+          <tr><td>素材库浏览</td><td class="text-center perm-yes">全量</td><td class="text-center perm-yes">团队</td><td class="text-center perm-yes">团队</td><td class="text-center perm-yes">全量</td><td class="text-center perm-partial">本人</td><td class="text-center perm-yes">全量</td></tr>
+          <tr><td>模版引用排行</td><td class="text-center perm-yes">全量</td><td class="text-center perm-yes">全量</td><td class="text-center perm-yes">全量</td><td class="text-center perm-yes">全量</td><td class="text-center perm-yes">全量</td><td class="text-center perm-yes">全量</td></tr>
+          <tr><td>模版评价 / 打分</td><td class="text-center perm-partial">只读</td><td class="text-center perm-partial">只读</td><td class="text-center perm-yes">可打分</td><td class="text-center perm-yes">打分+反馈</td><td class="text-center perm-yes">可打分</td><td class="text-center perm-no">—</td></tr>
+          <tr><td>产销比分析</td><td class="text-center perm-yes">全公司</td><td class="text-center perm-yes">本团队</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">本组</td><td class="text-center perm-partial">本人</td><td class="text-center perm-no">—</td></tr>
+          <tr><td>新素材通知订阅</td><td class="text-center perm-partial">摘要</td><td class="text-center perm-yes">团队级</td><td class="text-center perm-yes">个性化</td><td class="text-center perm-yes">组级</td><td class="text-center perm-yes">个性化</td><td class="text-center perm-no">—</td></tr>
+          <tr><td>素材流转审计</td><td class="text-center perm-no">—</td><td class="text-center perm-partial">只读</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">本组</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">全量</td></tr>
+          <tr><td>账号 / 权限 / 接入</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">全量管理</td></tr>
+          <tr><td>评分模型权重</td><td class="text-center perm-partial">审批</td><td class="text-center perm-partial">建议</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">配置</td></tr>
+          <tr><td>系统健康 / 监控</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-no">—</td><td class="text-center perm-yes">全量</td></tr>
+        </tbody>
+      </table>
+      <div class="mt-3 flex items-center gap-4 text-[11px] text-slate-500">
+        <span><span class="perm-yes">●</span> 完全可访问</span>
+        <span><span class="perm-partial">●</span> 受限/只读</span>
+        <span><span class="perm-no">●</span> 无权限</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 操作审计 -->
+  <section class="px-8 pt-6 pb-8">
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-sm font-semibold">📜 操作审计日志 · 最近</div>
+        <div class="flex gap-2 text-xs">
+          <input class="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs" placeholder="搜索账号 / 操作">
+          <button class="px-3 py-1 bg-slate-800 rounded">导出</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>时间</th><th>账号</th><th>角色</th><th>模块</th><th>操作</th><th>对象</th><th>IP</th><th>结果</th></tr></thead>
+        <tbody>
+          <tr><td>10:38:21</td><td>admin</td><td>管理员</td><td>权限</td><td>角色编辑</td><td>投放优化师</td><td>10.0.12.4</td><td><span class="pill ok">成功</span></td></tr>
+          <tr><td>10:36:02</td><td>linjie</td><td>组长</td><td>素材流转</td><td>批量分发</td><td>32 条 / A 团队</td><td>10.0.12.36</td><td><span class="pill ok">成功</span></td></tr>
+          <tr><td>10:32:45</td><td>wangming</td><td>优化师</td><td>素材库</td><td>领取素材</td><td>#2841</td><td>10.0.12.78</td><td><span class="pill ok">成功</span></td></tr>
+          <tr><td>10:30:12</td><td>suqing</td><td>设计师</td><td>素材生产</td><td>提审</td><td>8 条</td><td>10.0.12.92</td><td><span class="pill ok">成功</span></td></tr>
+          <tr><td>10:28:00</td><td>zhangboss</td><td>老板</td><td>权重审批</td><td>查看权重提案</td><td>—</td><td>MS v2.4.2</td><td>10.0.12.1</td><td><span class="pill warn">待审批</span></td></tr>
+          <tr><td>10:25:48</td><td>—</td><td>系统</td><td>评分模型</td><td>滚动重算</td><td><span class="text-purple-300">短剧</span>/古言女频</td><td>2847 条</td><td>internal</td><td><span class="pill ok">成功</span></td></tr>
+          <tr><td>10:22:30</td><td>hanxue</td><td>设计师</td><td>账号</td><td>登录</td><td>—</td><td>—</td><td>10.0.12.118</td><td><span class="pill ok">成功</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+// ====== 分类筛选逻辑 ======
+
+// ====== 时间维度切换 ======
+const kpiData = {
+  today: { label:'2026-05-23 · 截至当前时刻', items:[
+    {title:'在线用户',value:'186',change:'▼ 12.3%',positive:false,yVal:'昨日峰值 212'},
+    {title:'今日 API 调用',value:'1.84M',change:'▲ 4.2%',positive:true,yVal:'昨日 4.26M'},
+    {title:'数据源在线',value:'7 / 7',change:'100%',positive:true,yVal:'昨日 99.8%'},
+    {title:'评分模型版本',value:'v2.4.1',change:'稳定',positive:null,yVal:'5/20 上线'},
+    {title:'告警事件',value:'3',change:'▼ 40%',positive:true,yVal:'昨日 5'},
+    {title:'存储用量',value:'68%',change:'▲ 0.6%',positive:null,yVal:'昨日 +380GB'}
+  ]},
+  week: { label:'2026-05-19 ~ 05-23 · 本周累计', items:[
+    {title:'周均在线',value:'178',change:'▲ 6% vs 上周',positive:true},
+    {title:'本周 API 调用',value:'19.2M',change:'▲ 8.4% vs 上周',positive:true},
+    {title:'数据源可用率',value:'99.6%',change:'目标 99.5%',positive:true},
+    {title:'模型重算次数',value:'168',change:'7 × 24 滚动',positive:null},
+    {title:'本周告警',value:'18',change:'▼ 4 vs 上周 22',positive:true},
+    {title:'存储增量',value:'+1.8TB',change:'环比上周 +1.6TB',positive:null}
+  ]},
+  month: { label:'2026-05-01 ~ 05-23 · 本月累计', items:[
+    {title:'月均在线',value:'172',change:'▲ 12% vs 上月',positive:true},
+    {title:'本月 API 调用',value:'82.4M',change:'▲ 14% vs 上月',positive:true},
+    {title:'数据源可用率',value:'99.4%',change:'目标 99.5% · 差 0.1pp',positive:false},
+    {title:'模型迭代',value:'2 次',change:'v2.3.8 → v2.4.1',positive:null},
+    {title:'本月告警',value:'62',change:'▼ 18% vs 上月 76',positive:true},
+    {title:'存储增量',value:'+7.2TB',change:'预计月底 49TB',positive:null}
+  ]},
+  year: { label:'2026-01-01 ~ 05-23 · 年度累计', items:[
+    {title:'注册账号',value:'248',change:'新增 86 / 流失 12',positive:null},
+    {title:'年度 API 调用',value:'386M',change:'▲ 42% vs 去年同期',positive:true},
+    {title:'年均可用率',value:'99.7%',change:'目标 99.5% · 达标',positive:true},
+    {title:'模型迭代',value:'12 次',change:'v1.8 → v2.4.1',positive:null},
+    {title:'年度告警',value:'284',change:'▼ 32% vs 去年 418',positive:true},
+    {title:'存储总量',value:'42TB',change:'年初 18TB → 现 42TB',positive:null}
+  ]},
+  custom: { label:'自定义日期范围', items:[
+    {title:'在线用户',value:'—',change:'选择日期后加载',positive:null},
+    {title:'API 调用',value:'—',change:'选择日期后加载',positive:null},
+    {title:'数据源',value:'—',change:'选择日期后加载',positive:null},
+    {title:'模型版本',value:'—',change:'选择日期后加载',positive:null},
+    {title:'告警事件',value:'—',change:'选择日期后加载',positive:null},
+    {title:'存储',value:'—',change:'选择日期后加载',positive:null}
+  ]}
+};
+function renderKPI(p){
+  const d=kpiData[p];
+  document.getElementById('timeLabel').textContent=d.label;
+  document.getElementById('customRange').style.display=p==='custom'?'flex':'none';
+  document.getElementById('kpiPanel').innerHTML=d.items.map(it=>{
+    const cc=it.positive===true?'text-emerald-400':it.positive===false?'text-rose-400':'text-slate-400';
+    const yLine=it.yVal?`<div class="text-[10px] text-slate-400 mt-0.5">${it.yVal} · <span class="${cc}">${it.change}</span></div>`:`<div class="text-[11px] ${cc} mt-1">${it.change}</div>`;
+    return `<div class="card kpi p-4"><div class="text-[11px] text-slate-400">${it.title}</div><div class="text-2xl font-bold mt-1">${it.value}</div>${yLine}</div>`;
+  }).join('');
+}
+function switchTime(p){
+  document.querySelectorAll('.time-tab').forEach(b=>{
+    b.className=b.dataset.tab===p?'time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all bg-slate-500/30 text-slate-200 border border-slate-400/40':'time-tab px-4 py-2 rounded-lg text-xs font-medium transition-all text-slate-400 hover:text-white';
+  });
+  renderKPI(p);
+}
+renderKPI('today');
+
+// ====== 图表 ======
+const hours=Array.from({length:24},(_,i)=>`${i}:00`);
+new Chart(document.getElementById('apiChart'),{
+  type:'line',
+  data:{labels:hours,datasets:[
+    {label:'/api/material',data:[180,170,165,160,170,200,250,320,380,420,400,380,360,340,330,320,310,300,290,280,260,240,220,200],borderColor:'#818cf8',backgroundColor:'rgba(129,140,248,.15)',fill:true,tension:.35},
+    {label:'/api/score',data:[120,110,108,105,110,140,180,220,280,310,320,310,300,290,280,270,260,250,240,220,200,180,160,140],borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.15)',fill:true,tension:.35},
+    {label:'/api/campaign',data:[200,195,190,185,195,230,290,360,420,470,460,440,420,400,390,380,370,360,340,320,300,280,260,230],borderColor:'#fbbf24',backgroundColor:'rgba(251,191,36,.15)',fill:true,tension:.35}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#cbd5e1',font:{size:11}}}},
+    scales:{x:{ticks:{color:'#64748b',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#64748b',font:{size:10},callback:v=>v+'ms'},grid:{color:'rgba(148,163,184,.08)'}}}
+  }
+});
+</script>
+</body>
+</html>

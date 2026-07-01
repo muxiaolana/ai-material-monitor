@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>素材全局监控系统 · 入口</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;}
+  .gradient-bg{background:#f8fafc;}
+  .role-card{transition:all .3s ease;background:#ffffff;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .role-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px -8px rgba(0,0,0,.1);}
+  .glow{box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .grid-pattern{background-image:linear-gradient(rgba(99,102,241,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.04) 1px,transparent 1px);background-size:48px 48px;}
+</style>
+</head>
+<body class="gradient-bg text-slate-800 min-h-screen">
+<div class="grid-pattern absolute inset-0 pointer-events-none"></div>
+
+<!-- 顶部导航 -->
+<header class="relative z-10 px-10 py-6 flex items-center justify-between border-b border-slate-200">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center font-bold text-lg text-white">MC</div>
+    <div>
+      <div class="text-lg font-semibold tracking-wide text-slate-900">视频素材全局监控系统</div>
+      <div class="text-xs text-slate-500">Material Operation Cockpit · v1.0</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-6 text-sm text-slate-500">
+    <span>2026-05-23 周六</span>
+    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> 8 个页面在线</span>
+    <button class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200">使用文档</button>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="relative z-10 px-10 pt-14 pb-10 max-w-7xl mx-auto">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs mb-6">
+    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+    小说 / 短剧 · 素材中台 · 全链路指挥中枢
+  </div>
+  <h1 class="text-4xl font-semibold leading-tight text-slate-900">
+    一套面板，监控素材<br>
+    <span class="bg-gradient-to-r from-indigo-600 via-fuchsia-600 to-amber-500 bg-clip-text text-transparent">生产 · 流转 · 投放 · 效果</span>
+  </h1>
+  <p class="text-slate-600 mt-5 max-w-2xl">
+    从模版生成到素材入库、从团队分发到广告回流，每条素材都有唯一身份与全链路时间轴。
+    六大角色按层级看到不同视图，老板看战略、投放总负责人管全局、团队负责人看产能、优化师看选材、设计师看个人、管理员看健康。
+  </p>
+
+  <!-- 系统能力四宫格 -->
+  <div class="grid grid-cols-4 gap-4 mt-10">
+    <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
+      <div class="text-3xl font-bold text-indigo-600">10</div>
+      <div class="text-xs text-slate-500 mt-1">核心业务模块</div>
+    </div>
+    <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
+      <div class="text-3xl font-bold text-fuchsia-600">9</div>
+      <div class="text-xs text-slate-500 mt-1">角色分层视图</div>
+    </div>
+    <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
+      <div class="text-3xl font-bold text-amber-600">2 套</div>
+      <div class="text-xs text-slate-500 mt-1">素材 / 模版评分模型</div>
+    </div>
+    <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
+      <div class="text-3xl font-bold text-emerald-600">2 平台</div>
+      <div class="text-xs text-slate-500 mt-1">头条 · 腾讯</div>
+    </div>
+  </div>
+</section>
+
+<!-- 角色入口 -->
+<section class="relative z-10 px-10 pb-16 max-w-7xl mx-auto">
+  <div class="flex items-end justify-between mb-6">
+    <h2 class="text-2xl font-semibold text-slate-900">按角色进入对应工作台</h2>
+    <div class="text-sm text-slate-500">点击卡片查看该角色高保真界面</div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-6">
+    <!-- 企业管理者 -->
+    <a href="boss.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-2xl">👑</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">企业管理者</div>
+          <div class="text-xs text-slate-500">CEO Cockpit</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">全公司经营驾驶舱：素材产能、投放消耗、整体 ROI、团队对比、爆款分布。一屏看全局，一图看趋势。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 text-xs border border-amber-200">战略大盘</span>
+        <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 text-xs border border-amber-200">爆款率</span>
+        <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 text-xs border border-amber-200">团队 PK</span>
+      </div>
+    </a>
+
+    <!-- 投放团队负责人 -->
+    <a href="team-lead.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-2xl">🎯</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">投放团队负责人</div>
+          <div class="text-xs text-slate-500">Team Lead Console</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">团队作战室：本团队消耗、ROI、人均产出、素材消化效率、优化师选材命中率，及时调整选材策略。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-xs border border-indigo-200">团队 ROI</span>
+        <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-xs border border-indigo-200">人均带量</span>
+        <span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-xs border border-indigo-200">选材命中率</span>
+      </div>
+    </a>
+
+    <!-- 投放优化师 -->
+    <a href="optimizer.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-2xl">⚙️</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">投放优化师</div>
+          <div class="text-xs text-slate-500">Optimizer Workbench</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">选材工作台：系统推荐高潜素材、查看素材评级、对模版打分、追踪每条素材的投放结果与衰退预警。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-cyan-50 text-cyan-700 text-xs border border-cyan-200">素材选取</span>
+        <span class="px-2 py-0.5 rounded bg-cyan-50 text-cyan-700 text-xs border border-cyan-200">衰退预警</span>
+        <span class="px-2 py-0.5 rounded bg-cyan-50 text-cyan-700 text-xs border border-cyan-200">模版评分</span>
+      </div>
+    </a>
+
+    <!-- 优化师投放总负责人 -->
+    <a href="optimizer-team-lead.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-violet-50 border border-violet-200 flex items-center justify-center text-2xl">🏛️</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">优化师投放总负责人</div>
+          <div class="text-xs text-slate-500">Optimizer Lead Console</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">投放管理中台：全局消耗/ROI、5 个投放团队排行、各团队消耗对比、素材命中率、全局预警与建议。管理所有投放团队。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-violet-50 text-violet-700 text-xs border border-violet-200">全局消耗</span>
+        <span class="px-2 py-0.5 rounded bg-violet-50 text-violet-700 text-xs border border-violet-200">团队排行</span>
+        <span class="px-2 py-0.5 rounded bg-violet-50 text-violet-700 text-xs border border-violet-200">全局预警</span>
+      </div>
+    </a>
+
+    <!-- 素材团队负责人 -->
+    <a href="material-team-lead.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-2xl">🏭</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">素材团队负责人</div>
+          <div class="text-xs text-slate-500">Material Team Lead</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">素材管理中台：5个素材组对比、全局产能、质检通过率、各组PK排行、全局预警。管理所有素材组。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs border border-blue-200">全局产能</span>
+        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs border border-blue-200">组间PK</span>
+        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs border border-blue-200">质量监控</span>
+      </div>
+    </a>
+
+    <!-- 素材组长 -->
+    <a href="material-lead.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-2xl">👩‍💼</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">素材组长</div>
+          <div class="text-xs text-slate-500">Material Group Lead</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">组内工作台：设计师产能排行、质检通过率、任务排期、生产快速入口、组内素材分配。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs border border-blue-200">人效排名</span>
+        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs border border-blue-200">质检通过</span>
+        <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs border border-blue-200">任务排期</span>
+      </div>
+    </a>
+
+    <!-- 素材设计师 -->
+    <a href="designer.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-2xl">🎨</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">素材设计师</div>
+          <div class="text-xs text-slate-500">Designer Studio</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">个人产出与评级：今日产量、首过审率、个人素材均分、爆款率（S+A 占比）、模版调用记录。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-xs border border-emerald-200">个人 KPI</span>
+        <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-xs border border-emerald-200">爆款率</span>
+        <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-xs border border-emerald-200">模版调用</span>
+      </div>
+    </a>
+
+    <!-- 系统管理员 -->
+    <a href="admin.html" class="role-card rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-2xl">🛡️</div>
+        <div>
+          <div class="text-lg font-semibold text-slate-900">系统管理员</div>
+          <div class="text-xs text-slate-500">System Admin</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-600 leading-6">系统健康与权限：账号管理、角色矩阵、数据源接入状态、评分模型权重配置、接口监控与日志。</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs border border-slate-200">权限矩阵</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs border border-slate-200">数据源</span>
+        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-xs border border-slate-200">模型权重</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- 模块矩阵 -->
+<section class="relative z-10 px-10 pb-20 max-w-7xl mx-auto">
+  <h2 class="text-2xl font-semibold text-slate-900 mb-6">系统十大核心模块</h2>
+  <div class="grid grid-cols-5 gap-3 text-sm">
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-indigo-600 font-semibold">① 素材生产</div><div class="text-slate-500 text-xs mt-1">模版工坊 / 手工上传</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-indigo-600 font-semibold">② 新素材通知</div><div class="text-slate-500 text-xs mt-1">工作台内部专栏展示</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-indigo-600 font-semibold">③ 分组产能统计</div><div class="text-slate-500 text-xs mt-1">题材 / 组 / 设计师</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-indigo-600 font-semibold">④ 素材流转</div><div class="text-slate-500 text-xs mt-1">状态机 + 时间轴</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-indigo-600 font-semibold">⑤ 团队使用</div><div class="text-slate-500 text-xs mt-1">领取 / 上跑 / 存活</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-fuchsia-600 font-semibold">⑥ 投放结果</div><div class="text-slate-500 text-xs mt-1">多平台回流聚合</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-fuchsia-600 font-semibold">⑦ 素材评价</div><div class="text-slate-500 text-xs mt-1">MS 评分 + S~D 评级</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-fuchsia-600 font-semibold">⑧ 模版引用</div><div class="text-slate-500 text-xs mt-1">引用数 / 热度榜</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-fuchsia-600 font-semibold">⑨ 模版评价</div><div class="text-slate-500 text-xs mt-1">TS 评分 + 适用性</div></div>
+    <div class="rounded-xl bg-white border border-slate-200 p-4 shadow-sm"><div class="text-fuchsia-600 font-semibold">⑩ 产销比分析</div><div class="text-slate-500 text-xs mt-1">PUR 多维拆解</div></div>
+  </div>
+</section>
+
+<footer class="relative z-10 px-10 py-6 border-t border-slate-200 text-center text-xs text-slate-500">
+  © 2026 素材中台产品部 · 视频素材全局监控系统 v1.0 · 内部原型
+</footer>
+</body>
+</html>
