@@ -134,6 +134,17 @@
         <button onclick="switchType('drama')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="drama">短剧</button>
         <button onclick="switchType('novel')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="novel">小说</button>
       </div>
+      <select id="dramaTypeSelect" class="hidden bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-w-[160px]">
+        <option value="all">全部短剧类型</option>
+        <option value="分销真人剧">分销真人剧</option>
+        <option value="自制真人剧">自制真人剧</option>
+        <option value="引入真人剧">引入真人剧</option>
+        <option value="达人漫剧">达人漫剧</option>
+        <option value="分销漫剧">分销漫剧</option>
+        <option value="字节漫剧">字节漫剧</option>
+        <option value="自制漫剧">自制漫剧</option>
+        <option value="引入漫剧">引入漫剧</option>
+      </select>
       <select id="bizSelect" onchange="switchBiz(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 max-w-[160px]">
         <option value="all">全部</option>
         <option value="客户端-小说付费">客户端-小说付费</option>
@@ -149,7 +160,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-4" id="kpiPanel"></div>
+    <div class="grid grid-cols-4 gap-4" id="kpiPanel"></div>
   </section>
 
 
@@ -274,11 +285,7 @@
     <div class="card p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-4">
-          <div class="text-sm font-semibold">爆款排行</div>
-          <div class="flex bg-slate-100 border border-slate-200 rounded-lg p-0.5 gap-0.5" id="hotViewTabs">
-            <button onclick="switchHotView('work')" class="hot-view-tab px-2.5 py-1 rounded text-[11px] font-medium bg-amber-500/20 text-amber-700 border border-amber-400/30" data-hotview="work">小说/短剧</button>
-            <button onclick="switchHotView('material')" class="hot-view-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-hotview="material">素材</button>
-          </div>
+          <div class="text-sm font-semibold">大盘优质素材</div>
           <select id="hotTeamSelect" onchange="filterHotByTeam(this.value)" class="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs text-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500">
             <option value="all">全部团队</option>
             <option value="A">A 团队</option>
@@ -288,10 +295,10 @@
             <option value="E">E 团队</option>
           </select>
         </div>
-        <span class="text-xs text-slate-500" id="hotListHint">按累计消耗排序 · Top 10</span>
+        <span class="text-xs text-slate-500" id="hotListHint">按累计消耗排序 · 素材明细平铺</span>
       </div>
-      <!-- 小说/短剧视图（默认显示） -->
-      <div id="hotWorkView">
+      <!-- 小说/短剧视图（已弃用，隐藏） -->
+      <div id="hotWorkView" class="hidden">
       <table id="top10Table">
         <thead><tr>
           <th class="w-8"><input type="checkbox" class="accent-amber-500" id="workSelectAll" onclick="toggleWorkSelectAll()"></th>
@@ -323,8 +330,8 @@
         </div>
       </div>
       </div>
-      <!-- 素材视图（默认隐藏） -->
-      <div id="hotMaterialView" class="hidden">
+      <!-- 素材视图（默认显示） -->
+      <div id="hotMaterialView">
         <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-slate-50 border border-slate-200">
           <span class="text-xs font-medium text-slate-600 shrink-0">消耗范围：</span>
           <input type="number" id="hotCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-amber-500">
@@ -408,27 +415,32 @@ const kpiData = {
   today: { label:'2026-05-23 · 截至当前时刻', items:[
     {title:'今日素材产量',value:'2,847',change:'▲ 12.4%',positive:true,yVal:'昨日 2,532'},
     {title:'今日总消耗',value:'¥ 386万',change:'▲ 8.1%',positive:true,yVal:'昨日 ¥358万'},
-    {title:'产销比 PUR',value:'63.8%',change:'▲ 2.6pp',positive:true,yVal:'昨日 61.2%'}
+    {title:'使用率',value:'63.8%',change:'▲ 2.6pp',positive:true,yVal:'昨日 61.2%'},
+    {title:'AI消耗占比',value:'48.6%',change:'▲ 3.2pp',positive:true,yVal:'昨日 45.4%'}
   ]},
   week: { label:'2026-05-19 ~ 05-23 · 本周累计', items:[
     {title:'本周素材产量',value:'12,840',change:'▲ 15% vs 上周 11,168',positive:true},
     {title:'本周总消耗',value:'¥ 1,860万',change:'▲ 11% vs 上周',positive:true},
-    {title:'产销比 PUR',value:'62.4%',change:'健康区间',positive:null}
+    {title:'使用率',value:'62.4%',change:'健康区间',positive:null},
+    {title:'AI消耗占比',value:'47.2%',change:'▲ 2.8pp vs 上周',positive:true}
   ]},
   month: { label:'2026-05-01 ~ 05-23 · 本月累计', items:[
     {title:'本月素材产量',value:'52,180',change:'▲ 18% vs 上月同期',positive:true},
     {title:'本月总消耗',value:'¥ 8,420万',change:'▲ 14% vs 上月同期',positive:true},
-    {title:'产销比 PUR',value:'61.6%',change:'健康区间',positive:null}
+    {title:'使用率',value:'61.6%',change:'健康区间',positive:null},
+    {title:'AI消耗占比',value:'46.5%',change:'▲ 4.1pp vs 上月',positive:true}
   ]},
   year: { label:'2026-01-01 ~ 05-23 · 年度累计', items:[
     {title:'年度素材产量',value:'248,600',change:'完成年目标 52%',positive:null},
     {title:'年度总消耗',value:'¥ 3.86亿',change:'▲ 26% vs 去年同期',positive:true},
-    {title:'产销比 PUR',value:'58.6%',change:'持续优化中',positive:null}
+    {title:'使用率',value:'58.6%',change:'持续优化中',positive:null},
+    {title:'AI消耗占比',value:'43.8%',change:'▲ 12.6pp vs 去年',positive:true}
   ]},
   custom: { label:'自定义日期范围', items:[
     {title:'区间素材产量',value:'—',change:'选择日期后加载',positive:null},
     {title:'区间总消耗',value:'—',change:'选择日期后加载',positive:null},
-    {title:'产销比 PUR',value:'—',change:'选择日期后加载',positive:null}
+    {title:'使用率',value:'—',change:'选择日期后加载',positive:null},
+    {title:'AI消耗占比',value:'—',change:'选择日期后加载',positive:null}
   ]}
 };
 function renderKPI(period){
@@ -857,6 +869,9 @@ function switchType(tab) {
       b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
     }
   });
+  // 仅当类型为"短剧"时显示短剧类型筛选框
+  const dramaSel = document.getElementById('dramaTypeSelect');
+  if (dramaSel) dramaSel.classList.toggle('hidden', tab !== 'drama');
 }
 
 // ====== 业务线切换 ======
