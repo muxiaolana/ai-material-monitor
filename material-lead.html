@@ -132,9 +132,27 @@
           <button onclick="switchType('drama',this)" class="type-tab px-4 py-2 rounded-lg text-xs font-medium text-slate-400" data-tab="drama">短剧</button>
           <button onclick="switchType('novel',this)" class="type-tab px-4 py-2 rounded-lg text-xs font-medium text-slate-400" data-tab="novel">小说</button>
         </div>
+        <select id="dramaTypeSelect" class="hidden bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px]">
+          <option value="all">全部短剧类型</option>
+          <option value="分销真人剧">分销真人剧</option>
+          <option value="自制真人剧">自制真人剧</option>
+          <option value="引入真人剧">引入真人剧</option>
+          <option value="达人漫剧">达人漫剧</option>
+          <option value="分销漫剧">分销漫剧</option>
+          <option value="字节漫剧">字节漫剧</option>
+          <option value="自制漫剧">自制漫剧</option>
+          <option value="引入漫剧">引入漫剧</option>
+        </select>
         <select id="bizSelect" onchange="switchBiz(this.value)" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px]">
           <option value="all">全部</option>
           <option value="客户端-付费小说">客户端-付费小说</option>
+        </select>
+        <select id="groupSelect" onchange="switchGroup(this.value)" class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[160px]">
+          <option value="all">全部组别</option>
+          <option value="一组">一组</option>
+          <option value="二组">二组</option>
+          <option value="三组">三组</option>
+          <option value="四组">四组</option>
         </select>
       </div>
       <div class="text-xs text-slate-500" id="timeSummary">今日产量 42 / 组内8人 · 人均 5.3条</div>
@@ -290,72 +308,17 @@
         <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetMyFilter()">重置</button>
       </div>
       <table>
-        <thead><tr><th class="w-8"></th><th>作品</th><th>是否含优质</th><th>类型</th><th>题材</th><th>评级</th><th>素材数</th><th>迭代素材数</th><th>使用数</th><th>展示数</th><th>点击数</th><th>转化数</th><th>累计消耗</th><th>均消</th><th>CTR</th><th>ROI</th><th>CVR</th></tr></thead>
+        <thead><tr><th>缩略图</th><th>素材名</th><th>所属作品</th><th>题材</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
         <tbody>
-          <tr class="my-row" onclick="toggleMyRow('my-1')">
-            <td><span class="my-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">都市重生</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">含优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>都市男频</td><td><span class="pill grade-S">S</span></td><td>4 条</td><td>1 条</td><td>3</td><td>120,889</td><td>5,440</td><td>147</td><td>¥21,760</td><td>¥5,440</td><td>4.5%</td><td>1.75</td><td>2.7%</td>
-          </tr>
-          <tr id="my-1" class="my-detail hidden">
-            <td colspan="18">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>86</td><td>145,172</td><td>8,420</td><td>227</td><td>¥8,420</td><td>5.8%</td><td>2.12</td><td>05-23 14:30</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-sky-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>64</td><td>139,184</td><td>6,820</td><td>167</td><td>¥6,820</td><td>4.9%</td><td>1.94</td><td>05-23 11:20</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-A">A</span></td><td>42</td><td>101,951</td><td>4,180</td><td>106</td><td>¥4,180</td><td>4.1%</td><td>1.68</td><td>05-22 18:05</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-cyan-400 to-teal-600"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-B">B</span></td><td>28</td><td>73,125</td><td>2,340</td><td>63</td><td>¥2,340</td><td>3.2%</td><td>1.42</td><td>05-22 09:40</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr class="my-row" onclick="toggleMyRow('my-2')">
-            <td><span class="my-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">古言冷面王爷</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">含优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>古言女频</td><td><span class="pill grade-S">S</span></td><td>2 条</td><td>0 条</td><td>2</td><td>70,000</td><td>3,430</td><td>100</td><td>¥12,600</td><td>¥6,300</td><td>4.9%</td><td>1.88</td><td>2.9%</td>
-          </tr>
-          <tr id="my-2" class="my-detail hidden">
-            <td colspan="18">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-purple-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>72</td><td>138,462</td><td>7,200</td><td>202</td><td>¥7,200</td><td>5.2%</td><td>1.98</td><td>05-23 16:10</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>54</td><td>117,391</td><td>5,400</td><td>142</td><td>¥5,400</td><td>4.6%</td><td>1.78</td><td>05-23 10:35</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr class="my-row" onclick="toggleMyRow('my-3')">
-            <td><span class="my-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">战神归来</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border-slate-200 text-[10px] border">无优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>战神</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>0 条</td><td>1</td><td>55,556</td><td>2,333</td><td>58</td><td>¥10,000</td><td>¥5,000</td><td>4.2%</td><td>1.66</td><td>2.5%</td>
-          </tr>
-          <tr id="my-3" class="my-detail hidden">
-            <td colspan="18">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>62</td><td>129,167</td><td>6,200</td><td>155</td><td>¥6,200</td><td>4.8%</td><td>1.82</td><td>05-23 13:20</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>38</td><td>105,556</td><td>3,800</td><td>95</td><td>¥3,800</td><td>3.6%</td><td>1.52</td><td>05-22 20:15</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr class="my-row" onclick="toggleMyRow('my-4')">
-            <td><span class="my-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">玄幻逆袭</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border-slate-200 text-[10px] border">无优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>玄幻</td><td><span class="pill grade-A">A</span></td><td>1 条</td><td>0 条</td><td>1</td><td>28,372</td><td>1,220</td><td>32</td><td>¥5,100</td><td>¥5,100</td><td>4.3%</td><td>1.70</td><td>2.6%</td>
-          </tr>
-          <tr id="my-4" class="my-detail hidden">
-            <td colspan="18">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>48</td><td>118,605</td><td>5,100</td><td>123</td><td>¥5,100</td><td>4.3%</td><td>1.70</td><td>05-23 17:00</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>86</td><td>145,172</td><td>8,420</td><td>227</td><td>¥8,420</td><td>5.8%</td><td>2.12</td><td>05-23 14:30</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-sky-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>64</td><td>139,184</td><td>6,820</td><td>167</td><td>¥6,820</td><td>4.9%</td><td>1.94</td><td>05-23 11:20</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-A">A</span></td><td>42</td><td>101,951</td><td>4,180</td><td>106</td><td>¥4,180</td><td>4.1%</td><td>1.68</td><td>05-22 18:05</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-cyan-400 to-teal-600"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-B">B</span></td><td>28</td><td>73,125</td><td>2,340</td><td>63</td><td>¥2,340</td><td>3.2%</td><td>1.42</td><td>05-22 09:40</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-purple-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>72</td><td>138,462</td><td>7,200</td><td>202</td><td>¥7,200</td><td>5.2%</td><td>1.98</td><td>05-23 16:10</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>54</td><td>117,391</td><td>5,400</td><td>142</td><td>¥5,400</td><td>4.6%</td><td>1.78</td><td>05-23 10:35</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>62</td><td>129,167</td><td>6,200</td><td>155</td><td>¥6,200</td><td>4.8%</td><td>1.82</td><td>05-23 13:20</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>38</td><td>105,556</td><td>3,800</td><td>95</td><td>¥3,800</td><td>3.6%</td><td>1.52</td><td>05-22 20:15</td></tr>
+          <tr class="my-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>48</td><td>118,605</td><td>5,100</td><td>123</td><td>¥5,100</td><td>4.3%</td><td>1.70</td><td>05-23 17:00</td></tr>
         </tbody>
       </table>
       <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
@@ -403,75 +366,20 @@
         <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetPoolFilter()">重置</button>
       </div>
       <table>
-        <thead><tr><th class="w-8"></th><th>作品</th><th>是否含优质</th><th>类型</th><th>题材</th><th>评级</th><th>素材数</th><th>使用数</th><th>展示数</th><th>点击数</th><th>转化数</th><th>累计消耗</th><th>均消</th><th>CTR</th><th>ROI</th><th>CVR</th></tr></thead>
+        <thead><tr><th>缩略图</th><th>素材名</th><th>所属作品</th><th>题材</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>素材师</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
         <tbody>
-          <tr class="pool-row" onclick="togglePoolRow('pool-1')">
-            <td><span class="pool-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">都市重生</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">含优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>都市男频</td><td><span class="pill grade-S">S</span></td><td>4 条</td><td>3</td><td>120,889</td><td>5,440</td><td>147</td><td>¥21,760</td><td>¥5,440</td><td>4.5%</td><td>1.75</td><td>2.7%</td>
-          </tr>
-          <tr id="pool-1" class="pool-detail hidden">
-            <td colspan="17">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>素材师</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td class="text-slate-500">张伟</td><td><span class="pill grade-S">S</span></td><td>86</td><td>145,172</td><td>8,420</td><td>227</td><td>¥8,420</td><td>5.8%</td><td>2.12</td><td>05-23 14:30</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-sky-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">李娜</td><td><span class="pill grade-A">A</span></td><td>64</td><td>139,184</td><td>6,820</td><td>167</td><td>¥6,820</td><td>4.9%</td><td>1.94</td><td>05-23 11:20</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">王磊</td><td><span class="pill grade-A">A</span></td><td>42</td><td>101,951</td><td>4,180</td><td>106</td><td>¥4,180</td><td>4.1%</td><td>1.68</td><td>05-22 18:05</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-cyan-400 to-teal-600"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">赵敏</td><td><span class="pill grade-B">B</span></td><td>28</td><td>73,125</td><td>2,340</td><td>63</td><td>¥2,340</td><td>3.2%</td><td>1.42</td><td>05-22 09:40</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr class="pool-row" onclick="togglePoolRow('pool-2')">
-            <td><span class="pool-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">古言冷面王爷</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border-emerald-200 text-[10px] border">含优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>古言女频</td><td><span class="pill grade-S">S</span></td><td>3 条</td><td>2</td><td>85,556</td><td>3,593</td><td>90</td><td>¥15,400</td><td>¥5,133</td><td>4.2%</td><td>1.68</td><td>2.5%</td>
-          </tr>
-          <tr id="pool-2" class="pool-detail hidden">
-            <td colspan="17">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>素材师</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-purple-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td class="text-slate-500">陈思</td><td><span class="pill grade-S">S</span></td><td>72</td><td>138,462</td><td>7,200</td><td>202</td><td>¥7,200</td><td>5.2%</td><td>1.98</td><td>05-23 16:10</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">周婷</td><td><span class="pill grade-A">A</span></td><td>54</td><td>117,391</td><td>5,400</td><td>142</td><td>¥5,400</td><td>4.6%</td><td>1.78</td><td>05-23 10:35</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td class="font-medium text-slate-700">V2 反转版</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">刘洋</td><td><span class="pill grade-B">B</span></td><td>28</td><td>100,000</td><td>2,800</td><td>70</td><td>¥2,800</td><td>2.8%</td><td>1.32</td><td>05-22 15:50</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr class="pool-row" onclick="togglePoolRow('pool-3')">
-            <td><span class="pool-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">战神归来</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border-slate-200 text-[10px] border">无优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>战神</td><td><span class="pill grade-A">A</span></td><td>3 条</td><td>2</td><td>64,444</td><td>2,256</td><td>50</td><td>¥11,600</td><td>¥3,867</td><td>3.5%</td><td>1.52</td><td>2.2%</td>
-          </tr>
-          <tr id="pool-3" class="pool-detail hidden">
-            <td colspan="17">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>素材师</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td class="text-slate-500">黄磊</td><td><span class="pill grade-A">A</span></td><td>62</td><td>129,167</td><td>6,200</td><td>155</td><td>¥6,200</td><td>4.8%</td><td>1.82</td><td>05-23 13:20</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">孙涛</td><td><span class="pill grade-B">B</span></td><td>38</td><td>105,556</td><td>3,800</td><td>95</td><td>¥3,800</td><td>3.6%</td><td>1.62</td><td>05-22 20:15</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">复仇版 V4</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">马超</td><td><span class="pill grade-C">C</span></td><td>16</td><td>76,190</td><td>1,600</td><td>43</td><td>¥1,600</td><td>2.1%</td><td>1.12</td><td>05-22 08:45</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <tr class="pool-row" onclick="togglePoolRow('pool-4')">
-            <td><span class="pool-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">玄幻逆袭</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border-slate-200 text-[10px] border">无优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>玄幻</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>1</td><td>46,111</td><td>1,706</td><td>39</td><td>¥8,300</td><td>¥4,150</td><td>3.7%</td><td>1.56</td><td>2.3%</td>
-          </tr>
-          <tr id="pool-4" class="pool-detail hidden">
-            <td colspan="17">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>结构类型</th><th>生产类别</th><th>素材师</th><th>等级</th><th>展示数</th><th>点击数</th><th>转化数</th><th>总广告</th><th>累计消耗</th><th>CTR</th><th>ROI</th><th>上传时间</th></tr></thead>
-                <tbody>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">林小雨</td><td><span class="pill grade-A">A</span></td><td>48</td><td>118,605</td><td>5,100</td><td>123</td><td>¥5,100</td><td>4.3%</td><td>1.70</td><td>05-23 17:00</td></tr>
-                  <tr><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">开服版 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">张婷</td><td><span class="pill grade-B">B</span></td><td>32</td><td>106,667</td><td>3,200</td><td>64</td><td>¥3,200</td><td>3.0%</td><td>1.42</td><td>05-22 14:30</td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td class="text-slate-500">张伟</td><td><span class="pill grade-S">S</span></td><td>86</td><td>145,172</td><td>8,420</td><td>227</td><td>¥8,420</td><td>5.8%</td><td>2.12</td><td>05-23 14:30</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-sky-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">李娜</td><td><span class="pill grade-A">A</span></td><td>64</td><td>139,184</td><td>6,820</td><td>167</td><td>¥6,820</td><td>4.9%</td><td>1.94</td><td>05-23 11:20</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">王磊</td><td><span class="pill grade-A">A</span></td><td>42</td><td>101,951</td><td>4,180</td><td>106</td><td>¥4,180</td><td>4.1%</td><td>1.68</td><td>05-22 18:05</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-cyan-400 to-teal-600"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">赵敏</td><td><span class="pill grade-B">B</span></td><td>28</td><td>73,125</td><td>2,340</td><td>63</td><td>¥2,340</td><td>3.2%</td><td>1.42</td><td>05-22 09:40</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-purple-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td class="text-slate-500">陈思</td><td><span class="pill grade-S">S</span></td><td>72</td><td>138,462</td><td>7,200</td><td>202</td><td>¥7,200</td><td>5.2%</td><td>1.98</td><td>05-23 16:10</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">周婷</td><td><span class="pill grade-A">A</span></td><td>54</td><td>117,391</td><td>5,400</td><td>142</td><td>¥5,400</td><td>4.6%</td><td>1.78</td><td>05-23 10:35</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td class="font-medium text-slate-700">V2 反转版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">刘洋</td><td><span class="pill grade-B">B</span></td><td>28</td><td>100,000</td><td>2,800</td><td>70</td><td>¥2,800</td><td>2.8%</td><td>1.32</td><td>05-22 15:50</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td class="text-slate-500">黄磊</td><td><span class="pill grade-A">A</span></td><td>62</td><td>129,167</td><td>6,200</td><td>155</td><td>¥6,200</td><td>4.8%</td><td>1.82</td><td>05-23 13:20</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">孙涛</td><td><span class="pill grade-B">B</span></td><td>38</td><td>105,556</td><td>3,800</td><td>95</td><td>¥3,800</td><td>3.6%</td><td>1.62</td><td>05-22 20:15</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">复仇版 V4</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">马超</td><td><span class="pill grade-C">C</span></td><td>16</td><td>76,190</td><td>1,600</td><td>43</td><td>¥1,600</td><td>2.1%</td><td>1.12</td><td>05-22 08:45</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td class="text-slate-500">林小雨</td><td><span class="pill grade-A">A</span></td><td>48</td><td>118,605</td><td>5,100</td><td>123</td><td>¥5,100</td><td>4.3%</td><td>1.70</td><td>05-23 17:00</td></tr>
+          <tr class="pool-flat-row"><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">开服版 V2</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] border border-slate-200">非优质</span></td><td><span class="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td class="text-slate-500">张婷</td><td><span class="pill grade-B">B</span></td><td>32</td><td>106,667</td><td>3,200</td><td>64</td><td>¥3,200</td><td>3.0%</td><td>1.42</td><td>05-22 14:30</td></tr>
         </tbody>
       </table>
       <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
@@ -926,10 +834,8 @@ function toggleMyRow(id){
 }
 
 function updateMyPagination(){
-  const allRows=document.querySelectorAll('.my-row');
-  const allDets=document.querySelectorAll('.my-detail');
+  const allRows=document.querySelectorAll('.my-flat-row');
   allRows.forEach(r=>r.style.display='none');
-  allDets.forEach(d=>{d.classList.add('hidden');d.style.display='none';});
   const visibleRows=Array.from(allRows).filter(r=>!r.classList.contains('hidden'));
   const total=visibleRows.length;
   const totalPages=Math.max(1,Math.ceil(total/myPageSize));
@@ -937,7 +843,7 @@ function updateMyPagination(){
   const start=(myCurrentPage-1)*myPageSize;
   const end=Math.min(start+myPageSize,total);
   visibleRows.slice(start,end).forEach(r=>{r.style.display='';});
-  document.getElementById('myPageInfo').textContent='共 '+total+' 条作品，第 '+myCurrentPage+' / '+totalPages+' 页';
+  document.getElementById('myPageInfo').textContent='共 '+total+' 条素材，第 '+myCurrentPage+' / '+totalPages+' 页';
   document.getElementById('myPrevBtn').disabled=(myCurrentPage<=1);
   document.getElementById('myNextBtn').disabled=(myCurrentPage>=totalPages);
   let btns=Array.from(document.querySelectorAll('[id^="myPage"]')).filter(b=>/^myPage\d+$/.test(b.id));
@@ -956,13 +862,11 @@ function updateMyPagination(){
 
 function goMyPage(p){
   myCurrentPage=p;
-  document.querySelectorAll('.my-detail').forEach(d=>{d.classList.add('hidden');d.style.display='none';});
-  document.querySelectorAll('.my-arrow').forEach(a=>a.textContent='▶');
   updateMyPagination();
 }
 
 function switchMyPage(delta){
-  const visibleRows=Array.from(document.querySelectorAll('.my-row')).filter(r=>!r.classList.contains('hidden'));
+  const visibleRows=Array.from(document.querySelectorAll('.my-flat-row')).filter(r=>!r.classList.contains('hidden'));
   const totalPages=Math.max(1,Math.ceil(visibleRows.length/myPageSize));
   const newPage=myCurrentPage+delta;
   if(newPage>=1&&newPage<=totalPages)goMyPage(newPage);
@@ -970,20 +874,20 @@ function switchMyPage(delta){
 
 function filterMyMaterials(){
   const wn=document.getElementById('myWorkName').value.trim().toLowerCase();
+  const mn=document.getElementById('myMaterialName').value.trim().toLowerCase();
   const minCost=parseFloat(document.getElementById('myCostMin').value)||0;
   const maxCost=parseFloat(document.getElementById('myCostMax').value)||Infinity;
-  document.querySelectorAll('.my-row').forEach(row=>{
-    const wt=row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-    const costText=row.querySelector('td:nth-child(12)').textContent;
+  document.querySelectorAll('.my-flat-row').forEach(row=>{
+    const matName=row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+    const workText=row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+    const costText=row.querySelector('td:nth-child(13)').textContent;
     let cost=parseFloat(costText.replace(/[¥,]/g,''));
     if(costText.includes('万')) cost*=10000;
-    const matchName=!wn||wt.includes(wn);
+    const matchWork=!wn||workText.includes(wn);
+    const matchMat=!mn||matName.includes(mn);
     const matchCost=cost>=minCost&&cost<=maxCost;
-    if(matchName&&matchCost){row.classList.remove('hidden');}
-    else{row.classList.add('hidden');
-      const det=row.nextElementSibling;if(det&&det.classList.contains('my-detail')){det.classList.add('hidden');det.style.display='none';}
-      const arrow=row.querySelector('.my-arrow');if(arrow)arrow.textContent='▶';
-    }
+    if(matchWork&&matchMat&&matchCost){row.classList.remove('hidden');}
+    else{row.classList.add('hidden');}
   });
   myCurrentPage=1;
   updateMyPagination();
@@ -991,11 +895,10 @@ function filterMyMaterials(){
 
 function resetMyFilter(){
   document.getElementById('myWorkName').value='';
+  document.getElementById('myMaterialName').value='';
   document.getElementById('myCostMin').value='';
   document.getElementById('myCostMax').value='';
-  document.querySelectorAll('.my-row').forEach(row=>{row.classList.remove('hidden');});
-  document.querySelectorAll('.my-detail').forEach(d=>{d.classList.add('hidden');d.style.display='none';});
-  document.querySelectorAll('.my-arrow').forEach(a=>a.textContent='▶');
+  document.querySelectorAll('.my-flat-row').forEach(row=>{row.classList.remove('hidden');});
   myCurrentPage=1;
   updateMyPagination();
 }
@@ -1012,10 +915,8 @@ function togglePoolRow(id){
 }
 
 function updatePoolPagination(){
-  const allRows=document.querySelectorAll('.pool-row');
-  const allDets=document.querySelectorAll('.pool-detail');
+  const allRows=document.querySelectorAll('.pool-flat-row');
   allRows.forEach(r=>r.style.display='none');
-  allDets.forEach(d=>{d.classList.add('hidden');d.style.display='none';});
   const visibleRows=Array.from(allRows).filter(r=>!r.classList.contains('hidden'));
   const total=visibleRows.length;
   const totalPages=Math.max(1,Math.ceil(total/poolPageSize));
@@ -1023,7 +924,7 @@ function updatePoolPagination(){
   const start=(poolCurrentPage-1)*poolPageSize;
   const end=Math.min(start+poolPageSize,total);
   visibleRows.slice(start,end).forEach(r=>{r.style.display='';});
-  document.getElementById('poolPageInfo').textContent='共 '+total+' 条作品，第 '+poolCurrentPage+' / '+totalPages+' 页';
+  document.getElementById('poolPageInfo').textContent='共 '+total+' 条素材，第 '+poolCurrentPage+' / '+totalPages+' 页';
   document.getElementById('poolPrevBtn').disabled=(poolCurrentPage<=1);
   document.getElementById('poolNextBtn').disabled=(poolCurrentPage>=totalPages);
   let btns=Array.from(document.querySelectorAll('[id^="poolPage"]')).filter(b=>/^poolPage\d+$/.test(b.id));
@@ -1042,13 +943,11 @@ function updatePoolPagination(){
 
 function goPoolPage(p){
   poolCurrentPage=p;
-  document.querySelectorAll('.pool-detail').forEach(d=>{d.classList.add('hidden');d.style.display='none';});
-  document.querySelectorAll('.pool-arrow').forEach(a=>a.textContent='▶');
   updatePoolPagination();
 }
 
 function switchPoolPage(delta){
-  const visibleRows=Array.from(document.querySelectorAll('.pool-row')).filter(r=>!r.classList.contains('hidden'));
+  const visibleRows=Array.from(document.querySelectorAll('.pool-flat-row')).filter(r=>!r.classList.contains('hidden'));
   const totalPages=Math.max(1,Math.ceil(visibleRows.length/poolPageSize));
   const newPage=poolCurrentPage+delta;
   if(newPage>=1&&newPage<=totalPages)goPoolPage(newPage);
@@ -1056,20 +955,20 @@ function switchPoolPage(delta){
 
 function filterPoolMaterials(){
   const wn=document.getElementById('poolWorkName').value.trim().toLowerCase();
+  const mn=document.getElementById('poolMaterialName').value.trim().toLowerCase();
   const minCost=parseFloat(document.getElementById('poolCostMin').value)||0;
   const maxCost=parseFloat(document.getElementById('poolCostMax').value)||Infinity;
-  document.querySelectorAll('.pool-row').forEach(row=>{
-    const wt=row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-    const costText=row.querySelector('td:nth-child(11)').textContent;
+  document.querySelectorAll('.pool-flat-row').forEach(row=>{
+    const matName=row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+    const workText=row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+    const costText=row.querySelector('td:nth-child(14)').textContent;
     let cost=parseFloat(costText.replace(/[¥,]/g,''));
     if(costText.includes('万')) cost*=10000;
-    const matchName=!wn||wt.includes(wn);
+    const matchWork=!wn||workText.includes(wn);
+    const matchMat=!mn||matName.includes(mn);
     const matchCost=cost>=minCost&&cost<=maxCost;
-    if(matchName&&matchCost){row.classList.remove('hidden');}
-    else{row.classList.add('hidden');
-      const det=row.nextElementSibling;if(det&&det.classList.contains('pool-detail')){det.classList.add('hidden');det.style.display='none';}
-      const arrow=row.querySelector('.pool-arrow');if(arrow)arrow.textContent='▶';
-    }
+    if(matchWork&&matchMat&&matchCost){row.classList.remove('hidden');}
+    else{row.classList.add('hidden');}
   });
   poolCurrentPage=1;
   updatePoolPagination();
@@ -1077,11 +976,10 @@ function filterPoolMaterials(){
 
 function resetPoolFilter(){
   document.getElementById('poolWorkName').value='';
+  document.getElementById('poolMaterialName').value='';
   document.getElementById('poolCostMin').value='';
   document.getElementById('poolCostMax').value='';
-  document.querySelectorAll('.pool-row').forEach(row=>{row.classList.remove('hidden');});
-  document.querySelectorAll('.pool-detail').forEach(d=>{d.classList.add('hidden');d.style.display='none';});
-  document.querySelectorAll('.pool-arrow').forEach(a=>a.textContent='▶');
+  document.querySelectorAll('.pool-flat-row').forEach(row=>{row.classList.remove('hidden');});
   poolCurrentPage=1;
   updatePoolPagination();
 }
@@ -1196,11 +1094,19 @@ function switchType(tab, btn) {
       b.className = 'type-tab px-4 py-2 rounded-lg text-xs font-medium text-slate-400';
     }
   });
+  // 仅当类型为"短剧"时显示短剧类型筛选框
+  const dramaSel = document.getElementById('dramaTypeSelect');
+  if (dramaSel) dramaSel.classList.toggle('hidden', tab !== 'drama');
 }
 
 // ====== 业务线切换 ======
 function switchBiz(val) {
   // placeholder: filter data by business line
+}
+
+// ====== 组别切换 ======
+function switchGroup(val) {
+  // placeholder: filter data by group
 }
 
 // ====== 弹窗控制 ======
