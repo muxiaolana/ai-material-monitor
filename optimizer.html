@@ -125,6 +125,17 @@
           <button onclick="switchType('drama')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="drama">短剧</button>
           <button onclick="switchType('novel')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="novel">小说</button>
         </div>
+        <select id="dramaTypeSelect" class="hidden bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-cyan-500 max-w-[160px]">
+          <option value="all">全部短剧类型</option>
+          <option value="分销真人剧">分销真人剧</option>
+          <option value="自制真人剧">自制真人剧</option>
+          <option value="引入真人剧">引入真人剧</option>
+          <option value="达人漫剧">达人漫剧</option>
+          <option value="分销漫剧">分销漫剧</option>
+          <option value="字节漫剧">字节漫剧</option>
+          <option value="自制漫剧">自制漫剧</option>
+          <option value="引入漫剧">引入漫剧</option>
+        </select>
         <select id="bizSelect" onchange="switchBiz(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-cyan-500 max-w-[200px]">
           <option value="all">全部</option>
           <option value="客户端-付费小说">客户端-付费小说</option>
@@ -209,80 +220,17 @@
         <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetStarFilter()">重置</button>
       </div>
       <table>
-        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="starSelectAll" onclick="toggleStarSelectAll()"></th><th class="w-8"></th><th>作品</th><th>类型</th><th>题材</th><th>评级 <span class="text-[10px] text-slate-400 font-normal">（本期不做）</span></th><th>素材数</th><th>迭代素材数</th><th>累计消耗</th><th>均消</th><th>CTR</th><th>ROI</th><th>CVR</th><th>是否含优质</th></tr></thead>
+        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="starSelectAll" onclick="toggleStarSelectAll()"></th><th>缩略图</th><th>素材名</th><th>所属作品</th><th>题材</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
         <tbody>
-          <!-- 都市重生 -->
-          <tr class="star-row" onclick="toggleStarRow('star-1')">
-            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-1" onclick="event.stopPropagation()"></td>
-            <td><span class="star-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">都市重生</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>都市男频</td><td><span class="pill grade-S">S</span></td><td>3 条</td><td>1 条</td><td>¥24,680</td><td>¥8,227</td><td>5.4%</td><td>2.08</td><td>3.2%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
-          </tr>
-          <tr id="star-1" class="star-detail hidden">
-            <td colspan="15">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-1',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-yellow-600"></div></td><td class="font-medium text-slate-700">黄金开场 V8</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">陈思远</td><td>124</td><td>5</td><td>¥9,820</td><td>5.8%</td><td>76%</td><td>2.18</td><td>3.5%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-yellow-400 to-amber-600"></div></td><td class="font-medium text-slate-700">冲突高潮 V6</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">李婷婷</td><td>98</td><td>3</td><td>¥8,260</td><td>5.2%</td><td>70%</td><td>2.06</td><td>3.1%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-500 to-orange-600"></div></td><td class="font-medium text-slate-700">悬念收尾 V4</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">王磊</td><td>76</td><td>2</td><td>¥6,600</td><td>4.8%</td><td>62%</td><td>1.92</td><td>2.9%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- 古言冷面王爷 -->
-          <tr class="star-row" onclick="toggleStarRow('star-2')">
-            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-2" onclick="event.stopPropagation()"></td>
-            <td><span class="star-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">古言冷面王爷</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>古言女频</td><td><span class="pill grade-S">S</span></td><td>2 条</td><td>0 条</td><td>¥14,820</td><td>¥7,410</td><td>5.0%</td><td>1.96</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
-          </tr>
-          <tr id="star-2" class="star-detail hidden">
-            <td colspan="15">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-2',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-red-600"></div></td><td class="font-medium text-slate-700">V5 情感爆发版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">周婷</td><td>86</td><td>4</td><td>¥8,420</td><td>5.4%</td><td>74%</td><td>2.12</td><td>3.3%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-rose-600"></div></td><td class="font-medium text-slate-700">V4 误会解除版</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">刘洋</td><td>72</td><td>2</td><td>¥6,400</td><td>4.6%</td><td>66%</td><td>1.82</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- 战神归来 -->
-          <tr class="star-row" onclick="toggleStarRow('star-3')">
-            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-3" onclick="event.stopPropagation()"></td>
-            <td><span class="star-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">战神归来</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>战神</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>0 条</td><td>¥11,240</td><td>¥5,620</td><td>4.6%</td><td>1.82</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td>
-          </tr>
-          <tr id="star-3" class="star-detail hidden">
-            <td colspan="15">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-3',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">热血集结 V10</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">黄磊</td><td>68</td><td>3</td><td>¥6,840</td><td>5.0%</td><td>72%</td><td>1.96</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-red-600"></div></td><td class="font-medium text-slate-700">逆袭反击 V7</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">孙涛</td><td>52</td><td>2</td><td>¥4,400</td><td>4.2%</td><td>60%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- 玄幻逆袭 -->
-          <tr class="star-row" onclick="toggleStarRow('star-4')">
-            <td><input type="checkbox" class="accent-cyan-500 star-check" data-group="star-4" onclick="event.stopPropagation()"></td>
-            <td><span class="star-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">玄幻逆袭</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>玄幻</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>1 条</td><td>¥9,680</td><td>¥4,840</td><td>4.4%</td><td>1.74</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
-          </tr>
-          <tr id="star-4" class="star-detail hidden">
-            <td colspan="15">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('star-4',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>素材师</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-emerald-600"></div></td><td class="font-medium text-slate-700">觉醒突破 V5</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">林小雨</td><td>56</td><td>2</td><td>¥5,880</td><td>4.8%</td><td>68%</td><td>1.84</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 text-[10px] border border-pink-200">解压</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-green-600"></div></td><td class="font-medium text-slate-700">秘境探险 V3</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">张婷</td><td>44</td><td>1</td><td>¥3,800</td><td>4.0%</td><td>56%</td><td>1.62</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-yellow-600"></div></td><td class="font-medium text-slate-700">黄金开场 V8</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">陈思远</td><td>124</td><td>5</td><td>¥9,820</td><td>5.8%</td><td>76%</td><td>2.18</td><td>3.5%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-yellow-400 to-amber-600"></div></td><td class="font-medium text-slate-700">冲突高潮 V6</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">李婷婷</td><td>98</td><td>3</td><td>¥8,260</td><td>5.2%</td><td>70%</td><td>2.06</td><td>3.1%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-500 to-orange-600"></div></td><td class="font-medium text-slate-700">悬念收尾 V4</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">王磊</td><td>76</td><td>2</td><td>¥6,600</td><td>4.8%</td><td>62%</td><td>1.92</td><td>2.9%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-red-600"></div></td><td class="font-medium text-slate-700">V5 情感爆发版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">周婷</td><td>86</td><td>4</td><td>¥8,420</td><td>5.4%</td><td>74%</td><td>2.12</td><td>3.3%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-rose-600"></div></td><td class="font-medium text-slate-700">V4 误会解除版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">刘洋</td><td>72</td><td>2</td><td>¥6,400</td><td>4.6%</td><td>66%</td><td>1.82</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">热血集结 V10</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">黄磊</td><td>68</td><td>3</td><td>¥6,840</td><td>5.0%</td><td>72%</td><td>1.96</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-red-600"></div></td><td class="font-medium text-slate-700">逆袭反击 V7</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">孙涛</td><td>52</td><td>2</td><td>¥4,400</td><td>4.2%</td><td>60%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-emerald-600"></div></td><td class="font-medium text-slate-700">觉醒突破 V5</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td class="text-slate-500">林小雨</td><td>56</td><td>2</td><td>¥5,880</td><td>4.8%</td><td>68%</td><td>1.84</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 text-[10px] border border-pink-200">解压</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 star-item" data-group="star-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-green-600"></div></td><td class="font-medium text-slate-700">秘境探险 V3</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td class="text-slate-500">张婷</td><td>44</td><td>1</td><td>¥3,800</td><td>4.0%</td><td>56%</td><td>1.62</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
         </tbody>
       </table>
       <!-- 分页 -->
@@ -610,83 +558,20 @@
         <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetNewFilter()">重置</button>
       </div>
       <table>
-        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="newSelectAll" onclick="toggleNewSelectAll()"></th><th class="w-8"></th><th>作品</th><th>类型</th><th>题材</th><th>评级</th><th>素材数</th><th>累计消耗</th><th>均消</th><th>CTR</th><th>ROI</th><th>CVR</th><th>是否含优质</th></tr></thead>
+        <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" id="newSelectAll" onclick="toggleNewSelectAll()"></th><th>缩略图</th><th>素材名</th><th>所属作品</th><th>题材</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
         <tbody>
-          <!-- 都市重生 -->
-          <tr class="new-row" onclick="toggleNewRow('new-1')">
-            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-1" onclick="event.stopPropagation()"></td>
-            <td><span class="new-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">都市重生</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>都市男频</td><td><span class="pill grade-S">S</span></td><td>4 条</td><td>¥22,000</td><td>¥5,500</td><td>4.6%</td><td>1.76</td><td>2.7%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
-          </tr>
-          <tr id="new-1" class="new-detail hidden">
-            <td colspan="14">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-1',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-purple-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>86</td><td>3</td><td>¥6,420</td><td>5.2%</td><td>72%</td><td>1.92</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-500 to-blue-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>64</td><td>2</td><td>¥5,680</td><td>4.6%</td><td>1.78</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>42</td><td>1</td><td>¥5,400</td><td>4.2%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-indigo-500"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>28</td><td>0</td><td>¥4,500</td><td>3.8%</td><td>1.56</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- 古言冷面王爷 -->
-          <tr class="new-row" onclick="toggleNewRow('new-2')">
-            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-2" onclick="event.stopPropagation()"></td>
-            <td><span class="new-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">古言冷面王爷</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>古言女频</td><td><span class="pill grade-S">S</span></td><td>3 条</td><td>¥14,600</td><td>¥4,867</td><td>4.2%</td><td>1.68</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
-          </tr>
-          <tr id="new-2" class="new-detail hidden">
-            <td colspan="14">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-2',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>62</td><td>2</td><td>¥5,620</td><td>4.6%</td><td>70%</td><td>1.82</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>48</td><td>1</td><td>¥4,980</td><td>4.0%</td><td>1.68</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td class="font-medium text-slate-700">V2 反转版</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>36</td><td>0</td><td>¥4,000</td><td>3.6%</td><td>1.52</td><td>2.2%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- 战神归来 -->
-          <tr class="new-row" onclick="toggleNewRow('new-3')">
-            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-3" onclick="event.stopPropagation()"></td>
-            <td><span class="new-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">战神归来</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td><td>战神</td><td><span class="pill grade-A">A</span></td><td>3 条</td><td>¥11,200</td><td>¥3,733</td><td>4.0%</td><td>1.58</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td>
-          </tr>
-          <tr id="new-3" class="new-detail hidden">
-            <td colspan="14">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-3',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>54</td><td>1</td><td>¥4,840</td><td>4.4%</td><td>68%</td><td>1.72</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>38</td><td>1</td><td>¥3,560</td><td>3.8%</td><td>1.52</td><td>2.3%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">复仇版 V4</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>22</td><td>0</td><td>¥2,800</td><td>3.2%</td><td>1.42</td><td>2.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- 玄幻逆袭 -->
-          <tr class="new-row" onclick="toggleNewRow('new-4')">
-            <td><input type="checkbox" class="accent-cyan-500 new-check" data-group="new-4" onclick="event.stopPropagation()"></td>
-            <td><span class="new-arrow">▶</span></td>
-            <td class="font-semibold text-slate-700">玄幻逆袭</td><td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td><td>玄幻</td><td><span class="pill grade-A">A</span></td><td>2 条</td><td>¥8,200</td><td>¥4,100</td><td>4.2%</td><td>1.64</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td>
-          </tr>
-          <tr id="new-4" class="new-detail hidden">
-            <td colspan="14">
-              <table class="w-full text-xs ml-6">
-                <thead><tr><th class="w-8"><input type="checkbox" class="accent-cyan-500" onclick="toggleGroupCheck('new-4',this)"></th><th>缩略图</th><th>素材名</th><th>是否为优质</th><th>总广告</th><th>我创建</th><th>累计消耗</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>CVR</th><th>生产类别</th><th>结构类型</th></tr></thead>
-                <tbody>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>48</td><td>0</td><td>¥4,600</td><td>4.4%</td><td>66%</td><td>1.70</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td></tr>
-                  <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">开服版 V2</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>32</td><td>1</td><td>¥3,600</td><td>4.0%</td><td>1.58</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-400 to-purple-600"></div></td><td class="font-medium text-slate-700">钩子 V12</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>86</td><td>3</td><td>¥6,420</td><td>5.2%</td><td>72%</td><td>1.92</td><td>3.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-indigo-500 to-blue-600"></div></td><td class="font-medium text-slate-700">爽点剪辑 V5</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>64</td><td>2</td><td>¥5,680</td><td>4.6%</td><td>1.78</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-blue-400 to-indigo-600"></div></td><td class="font-medium text-slate-700">反转开场 V3</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>42</td><td>1</td><td>¥5,400</td><td>4.2%</td><td>1.68</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-1"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-sky-400 to-indigo-500"></div></td><td class="font-medium text-slate-700">情感线 V2</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>28</td><td>0</td><td>¥4,500</td><td>3.8%</td><td>1.56</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td><td class="font-medium text-slate-700">V4 虐恋版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>62</td><td>2</td><td>¥5,620</td><td>4.6%</td><td>70%</td><td>1.82</td><td>2.8%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td class="font-medium text-slate-700">V3 甜宠版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>48</td><td>1</td><td>¥4,980</td><td>4.0%</td><td>1.68</td><td>2.5%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-2"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td class="font-medium text-slate-700">V2 反转版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>36</td><td>0</td><td>¥4,000</td><td>3.6%</td><td>1.52</td><td>2.2%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-amber-400 to-orange-600"></div></td><td class="font-medium text-slate-700">短挂 V8</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>54</td><td>1</td><td>¥4,840</td><td>4.4%</td><td>68%</td><td>1.72</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-orange-400 to-red-600"></div></td><td class="font-medium text-slate-700">高燃 V6</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>38</td><td>1</td><td>¥3,560</td><td>3.8%</td><td>1.52</td><td>2.3%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-3"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td class="font-medium text-slate-700">复仇版 V4</td><td class="text-slate-600">战神归来</td><td>战神</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>22</td><td>0</td><td>¥2,800</td><td>3.2%</td><td>1.42</td><td>2.0%</td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td class="font-medium text-slate-700">新版 V3</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td>48</td><td>0</td><td>¥4,600</td><td>4.4%</td><td>66%</td><td>1.70</td><td>2.6%</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td></tr>
+          <tr><td><input type="checkbox" class="accent-cyan-500 new-item" data-group="new-4"></td><td><div class="w-10 h-7 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td class="font-medium text-slate-700">开服版 V2</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td>32</td><td>1</td><td>¥3,600</td><td>4.0%</td><td>1.58</td><td>2.4%</td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td></tr>
         </tbody>
       </table>
       <!-- 底部操作栏 -->
@@ -873,6 +758,8 @@ function switchType(tab) {
     if (b.dataset.tab === tab) b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium bg-cyan-500/30 text-cyan-200 border border-cyan-400/40';
     else b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
   });
+  const dramaSel = document.getElementById('dramaTypeSelect');
+  if (dramaSel) dramaSel.classList.toggle('hidden', tab !== 'drama');
 }
 
 // ====== 业务线维度切换 ======
@@ -922,9 +809,11 @@ function filterStarMaterials(){
   const workName = document.getElementById('starWorkName')?.value.trim().toLowerCase() || '';
   const minCost = parseFloat(document.getElementById('starCostMin')?.value) || 0;
   const maxCost = parseFloat(document.getElementById('starCostMax')?.value) || Infinity;
-  document.querySelectorAll('.star-row').forEach(row => {
+  document.querySelectorAll('.star-item').forEach(cb => {
+    const row = cb.closest('tr');
+    if(!row) return;
     const name = row.textContent.toLowerCase();
-    const costText = row.textContent.match(/¥([d,]+)/);
+    const costText = row.textContent.match(/¥([\d,]+)/);
     const cost = costText ? parseFloat(costText[1].replace(/,/g,'')) : 0;
     const matchName = !workName || name.includes(workName);
     const matchCost = cost >= minCost && cost <= maxCost;
@@ -935,7 +824,7 @@ function resetStarFilter(){
   const el1 = document.getElementById('starWorkName'); if(el1) el1.value='';
   const el2 = document.getElementById('starCostMin'); if(el2) el2.value='';
   const el3 = document.getElementById('starCostMax'); if(el3) el3.value='';
-  document.querySelectorAll('.star-row').forEach(r => r.style.display='');
+  document.querySelectorAll('.star-item').forEach(cb => { const row = cb.closest('tr'); if(row) row.style.display=''; });
 }
 
 // ====== 大盘优质素材筛选 ======
@@ -992,7 +881,7 @@ function toggleStarRow(id){
 }
 function toggleStarSelectAll(){
   const checked=document.getElementById('starSelectAll').checked;
-  document.querySelectorAll('.star-check,.star-item').forEach(c=>c.checked=checked);
+  document.querySelectorAll('.star-item').forEach(c=>c.checked=checked);
   updateStarCount();
 }
 function toggleGroupCheck(group,el){
@@ -1006,14 +895,8 @@ function updateStarCount(){
   const n=document.querySelectorAll('.star-item:checked').length;
   document.getElementById('starSelectedCount').textContent='已选 '+n+' 条素材';
 }
-document.querySelectorAll('.star-check,.star-item').forEach(c=>{
-  c.addEventListener('change',function(){
-    if(this.classList.contains('star-check')){
-      const g=this.dataset.group;
-      document.querySelectorAll(`[data-group="${g}"].star-item`).forEach(x=>x.checked=this.checked);
-    }
-    updateStarCount();
-  });
+document.querySelectorAll('.star-item').forEach(c=>{
+  c.addEventListener('change',updateStarCount);
 });
 
 // ====== 今日新素材折叠切换 ======
@@ -1025,21 +908,15 @@ function toggleNewRow(id){
 }
 function toggleNewSelectAll(){
   const checked=document.getElementById('newSelectAll').checked;
-  document.querySelectorAll('.new-check,.new-item').forEach(c=>c.checked=checked);
+  document.querySelectorAll('.new-item').forEach(c=>c.checked=checked);
   updateNewCount();
 }
 function updateNewCount(){
   const n=document.querySelectorAll('.new-item:checked').length;
   document.getElementById('newSelectedCount').textContent='已选 '+n+' 条素材';
 }
-document.querySelectorAll('.new-check,.new-item').forEach(c=>{
-  c.addEventListener('change',function(){
-    if(this.classList.contains('new-check')){
-      const g=this.dataset.group;
-      document.querySelectorAll(`[data-group="${g}"].new-item`).forEach(x=>x.checked=this.checked);
-    }
-    updateNewCount();
-  });
+document.querySelectorAll('.new-item').forEach(c=>{
+  c.addEventListener('change',updateNewCount);
 });
 // ====== 只看今日切换 ======
 let todayOnlyMode = false;
@@ -1056,25 +933,19 @@ function toggleTodayOnly(btn){
 
 function filterNewMaterials(){
   const workName=document.getElementById('newWorkName').value.trim().toLowerCase();
-  const rows=document.querySelectorAll('.new-row');
-  rows.forEach(row=>{
-    const id=row.nextElementSibling.id;
-    const detail=document.getElementById(id);
-    const workText=row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+  document.querySelectorAll('.new-item').forEach(cb=>{
+    const row=cb.closest('tr');
+    if(!row) return;
+    const workText=row.textContent.trim().toLowerCase();
     const match=!workName||workText.includes(workName);
-    if(match){row.classList.remove('hidden');if(detail)detail.classList.remove('hidden');}
-    else{row.classList.add('hidden');if(detail){detail.classList.add('hidden');const arrow=row.querySelector('.new-arrow');if(arrow)arrow.textContent='▶';}
-      row.querySelector('.new-check').checked=false;
-      row.querySelectorAll('.new-item').forEach(x=>x.checked=false);
-    }
+    if(match){row.classList.remove('hidden');}
+    else{row.classList.add('hidden');cb.checked=false;}
   });
   updateNewCount();
 }
 function resetNewFilter(){
   document.getElementById('newWorkName').value='';
-  document.querySelectorAll('.new-row').forEach(row=>{row.classList.remove('hidden');});
-  document.querySelectorAll('.new-detail').forEach(d=>d.classList.add('hidden'));
-  document.querySelectorAll('.new-arrow').forEach(a=>a.textContent='▶');
+  document.querySelectorAll('.new-item').forEach(cb=>{const row=cb.closest('tr');if(row)row.classList.remove('hidden');});
   updateNewCount();
 }
 
