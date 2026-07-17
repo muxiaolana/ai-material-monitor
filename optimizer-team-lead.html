@@ -129,6 +129,17 @@
         <button onclick="switchType('drama')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="drama">短剧</button>
         <button onclick="switchType('novel')" class="type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white" data-tab="novel">小说</button>
       </div>
+      <select id="dramaTypeSelect" class="hidden bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500 max-w-[160px]">
+        <option value="all">全部短剧类型</option>
+        <option value="分销真人剧">分销真人剧</option>
+        <option value="自制真人剧">自制真人剧</option>
+        <option value="引入真人剧">引入真人剧</option>
+        <option value="达人漫剧">达人漫剧</option>
+        <option value="分销漫剧">分销漫剧</option>
+        <option value="字节漫剧">字节漫剧</option>
+        <option value="自制漫剧">自制漫剧</option>
+        <option value="引入漫剧">引入漫剧</option>
+      </select>
       <select id="bizSelect" onchange="switchBiz(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-violet-500 max-w-[160px]">
         <option value="all">全部</option>
         <option value="客户端-小说付费">客户端-小说付费</option>
@@ -163,14 +174,6 @@
     <div class="card p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="text-sm font-semibold">各团队消耗对比</div>
-        <div class="flex items-center gap-1.5">
-          <div class="flex gap-0.5" id="leadTimeTabs">
-            <button onclick="switchLeadTime('today')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-leadtime="today">当日</button>
-            <button onclick="switchLeadTime('week')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-leadtime="week">本周</button>
-            <button onclick="switchLeadTime('14d')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium bg-violet-500/20 text-violet-600 border border-violet-400/30" data-leadtime="14d">14日</button>
-            <button onclick="switchLeadTime('month')" class="lead-time-tab px-2.5 py-1 rounded text-[11px] font-medium text-slate-400" data-leadtime="month">当月</button>
-          </div>
-        </div>
       </div>
       <canvas id="adTrendChart" height="200"></canvas>
     </div>
@@ -362,8 +365,6 @@
         <input type="text" id="otlTeamRunMaterialName" placeholder="输入素材名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-violet-500">
         <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">剧名/小说名：</span>
         <input type="text" id="otlTeamRunWorkName" placeholder="输入作品名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-36 focus:outline-none focus:ring-1 focus:ring-violet-500">
-        <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">投放团队：</span>
-        <input type="text" id="otlTeamRunTeamName" placeholder="输入团队名称" class="px-2 py-1 text-xs rounded border border-slate-300 w-28 focus:outline-none focus:ring-1 focus:ring-violet-500">
         <span class="text-xs font-medium text-slate-600 shrink-0 ml-3">消耗范围：</span>
         <input type="number" id="otlTeamRunCostMin" placeholder="最小消耗" class="px-2 py-1 text-xs rounded border border-slate-300 w-24 focus:outline-none focus:ring-1 focus:ring-violet-500">
         <span class="text-xs text-slate-400">—</span>
@@ -372,15 +373,14 @@
         <button class="px-3 py-1 text-xs rounded bg-slate-200 text-slate-600 hover:bg-slate-300" onclick="resetOtlTeamRun()">重置</button>
       </div>
       <table>
-        <thead><tr><th>素材</th><th>所属作品</th><th>类型</th><th>投放团队</th><th>优化师</th><th>计划数</th><th>累计消耗</th><th>展示数</th><th>点击数</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>分时消耗</th><th>是否为优质 <span class="inline-block w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[9px] font-bold leading-[14px] text-center cursor-help" title="是否为大盘优质素材">?</span></th><th>生产类别</th><th>结构类型</th><th>状态 <span class="text-[10px] text-slate-400 font-normal">（本期不做"状态"）</span></th></tr></thead>
+        <thead><tr><th>素材</th><th>所属作品</th><th>类型</th><th>素材师</th><th>计划数</th><th>累计消耗</th><th>展示数</th><th>点击数</th><th>CTR</th><th>3秒播放率</th><th>ROI</th><th>分时消耗</th><th>是否为优质 <span class="inline-block w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[9px] font-bold leading-[14px] text-center cursor-help" title="是否为大盘优质素材">?</span></th><th>生产类别</th><th>结构类型</th><th>状态 <span class="text-[10px] text-slate-400 font-normal">（本期不做"状态"）</span></th></tr></thead>
         <tbody>
           <tr class="otl-team-run-row">
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-700"></div><span>都市重生 #2841</span></div></td>
             <td class="text-slate-600">都市重生录</td>
             <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
-            <td class="text-slate-600">A 团队</td>
             <td class="text-slate-600">韩雪</td>
-            <td>12</td><td>¥42,680</td><td>735,862</td><td>42,680</td><td>5.8%</td><td>78%</td><td>2.18</td>
+            <td>5 / 12</td><td>¥42,680</td><td>735,862</td><td>42,680</td><td>5.8%</td><td>78%</td><td>2.18</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] border border-blue-200">迭代素材</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
@@ -389,9 +389,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-rose-500 to-pink-700"></div><span>古言王爷 V3</span></div></td>
             <td class="text-slate-600">冷面王爷</td>
             <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td class="text-slate-600">B 团队</td>
             <td class="text-slate-600">周婷</td>
-            <td>10</td><td>¥38,420</td><td>784,082</td><td>38,420</td><td>4.9%</td><td>72%</td><td>1.92</td>
+            <td>4 / 10</td><td>¥38,420</td><td>784,082</td><td>38,420</td><td>4.9%</td><td>72%</td><td>1.92</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 text-[10px] border border-purple-200">视频号素材</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-700 text-[10px]">起量</span></td>
@@ -400,9 +399,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-amber-500 to-orange-700"></div><span>战神短挂 V6</span></div></td>
             <td class="text-slate-600">战神归来</td>
             <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
-            <td class="text-slate-600">A 团队</td>
             <td class="text-slate-600">赵明</td>
-            <td>8</td><td>¥28,180</td><td>687,317</td><td>28,180</td><td>4.1%</td><td>64%</td><td>1.62</td>
+            <td>3 / 8</td><td>¥28,180</td><td>687,317</td><td>28,180</td><td>4.1%</td><td>64%</td><td>1.62</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-600 text-[10px] border border-cyan-200">滚屏</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
@@ -411,9 +409,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-sky-700"></div><span>豪门替嫁 V2</span></div></td>
             <td class="text-slate-600">豪门替嫁</td>
             <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td class="text-slate-600">C 团队</td>
             <td class="text-slate-600">林小雨</td>
-            <td>6</td><td>¥18,340</td><td>573,125</td><td>18,340</td><td>3.2%</td><td>52%</td><td>1.18</td>
+            <td>2 / 6</td><td>¥18,340</td><td>573,125</td><td>18,340</td><td>3.2%</td><td>52%</td><td>1.18</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 text-[10px] border border-indigo-200">小说前贴</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 text-[10px]">衰退</span></td>
@@ -422,9 +419,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-fuchsia-500 to-purple-700"></div><span>悬疑追凶 V1</span></div></td>
             <td class="text-slate-600">悬疑追凶</td>
             <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td class="text-slate-600">D 团队</td>
             <td class="text-slate-600">吴芳</td>
-            <td>4</td><td>¥8,820</td><td>420,000</td><td>8,820</td><td>2.1%</td><td>38%</td><td>0.82</td>
+            <td>1 / 4</td><td>¥8,820</td><td>420,000</td><td>8,820</td><td>2.1%</td><td>38%</td><td>0.82</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">口播网赚</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-700 text-[10px]">归档</span></td>
@@ -433,9 +429,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-teal-700"></div><span>玄幻逆袭 V4</span></div></td>
             <td class="text-slate-600">玄幻逆袭</td>
             <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td class="text-slate-600">E 团队</td>
             <td class="text-slate-600">郑凯</td>
-            <td>9</td><td>¥32,150</td><td>652,800</td><td>32,150</td><td>4.9%</td><td>70%</td><td>1.86</td>
+            <td>4 / 9</td><td>¥32,150</td><td>652,800</td><td>32,150</td><td>4.9%</td><td>70%</td><td>1.86</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">是</span></td><td><span class="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] border border-emerald-200">原片剪辑</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-700 text-[10px]">在跑</span></td>
@@ -444,9 +439,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-sky-500 to-blue-700"></div><span>修仙之路 V2</span></div></td>
             <td class="text-slate-600">修仙逆天</td>
             <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
-            <td class="text-slate-600">B 团队</td>
             <td class="text-slate-600">杨雪</td>
-            <td>7</td><td>¥22,460</td><td>548,000</td><td>22,460</td><td>4.1%</td><td>62%</td><td>1.54</td>
+            <td>3 / 7</td><td>¥22,460</td><td>548,000</td><td>22,460</td><td>4.1%</td><td>62%</td><td>1.54</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 text-[10px] border border-amber-200">解说</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-700 text-[10px]">起量</span></td>
@@ -455,9 +449,8 @@
             <td><div class="flex items-center gap-2"><div class="w-8 h-8 rounded bg-gradient-to-br from-orange-500 to-red-700"></div><span>霸总回归 V5</span></div></td>
             <td class="text-slate-600">霸总归来</td>
             <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td class="text-slate-600">C 团队</td>
             <td class="text-slate-600">马超</td>
-            <td>5</td><td>¥15,280</td><td>486,200</td><td>15,280</td><td>3.1%</td><td>48%</td><td>1.28</td>
+            <td>2 / 5</td><td>¥15,280</td><td>486,200</td><td>15,280</td><td>3.1%</td><td>48%</td><td>1.28</td>
             <td><button onclick="showOtlHourlyChart(this)" class="text-violet-400 hover:text-violet-300 text-sm" title="查看分时数据">📈</button></td>
             <td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-600 text-[10px]">否</span></td><td><span class="px-1.5 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 text-[10px] border border-orange-200">广播剧</span></td>
             <td><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 text-[10px]">衰退</span></td>
@@ -882,28 +875,24 @@ initPieChart('team');
 function filterOtlTeamRun(){
   const materialName = document.getElementById('otlTeamRunMaterialName').value.trim().toLowerCase();
   const workName = document.getElementById('otlTeamRunWorkName').value.trim().toLowerCase();
-  const teamName = document.getElementById('otlTeamRunTeamName').value.trim().toLowerCase();
   const costMin = parseFloat(document.getElementById('otlTeamRunCostMin').value) || 0;
   const costMax = parseFloat(document.getElementById('otlTeamRunCostMax').value) || Infinity;
   document.querySelectorAll('.otl-team-run-row').forEach(row => {
     const tds = row.querySelectorAll('td');
     const material = tds[0]?.textContent.trim().toLowerCase() || '';
     const work = tds[1]?.textContent.trim().toLowerCase() || '';
-    const team = tds[3]?.textContent.trim().toLowerCase() || '';
-    const costStr = tds[6]?.textContent.replace(/[¥,]/g,'') || '0';
+    const costStr = tds[5]?.textContent.replace(/[¥,]/g,'') || '0';
     const cost = parseFloat(costStr) || 0;
     const matchMaterial = !materialName || material.includes(materialName);
     const matchWork = !workName || work.includes(workName);
-    const matchTeam = !teamName || team.includes(teamName);
     const matchCost = cost >= costMin && cost <= costMax;
-    if(matchMaterial && matchWork && matchTeam && matchCost) row.classList.remove('hidden');
+    if(matchMaterial && matchWork && matchCost) row.classList.remove('hidden');
     else row.classList.add('hidden');
   });
 }
 function resetOtlTeamRun(){
   document.getElementById('otlTeamRunMaterialName').value='';
   document.getElementById('otlTeamRunWorkName').value='';
-  document.getElementById('otlTeamRunTeamName').value='';
   document.getElementById('otlTeamRunCostMin').value='';
   document.getElementById('otlTeamRunCostMax').value='';
   document.querySelectorAll('.otl-team-run-row').forEach(row=>row.classList.remove('hidden'));
@@ -1024,6 +1013,9 @@ function switchType(tab) {
       b.className = 'type-tab px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-white';
     }
   });
+  // 仅当类型为"短剧"时显示短剧类型筛选框
+  const dramaSel = document.getElementById('dramaTypeSelect');
+  if (dramaSel) dramaSel.classList.toggle('hidden', tab !== 'drama');
 }
 
 // ====== 业务线切换 ======
