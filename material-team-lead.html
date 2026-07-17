@@ -721,11 +721,14 @@
           <span class="text-xs text-slate-500 shrink-0">结构类型</span>
           <div class="flex bg-slate-100 rounded-lg p-0.5 gap-0.5 flex-wrap">
             <button onclick="switchPoolFilter('struct','all',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium bg-blue-500/30 text-blue-700 border border-blue-400/40">全部</button>
-            <button onclick="switchPoolFilter('struct','koubo',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">口播网赚</button>
-            <button onclick="switchPoolFilter('struct','yuanpian',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">原片素材</button>
-            <button onclick="switchPoolFilter('struct','shipinhao',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">视频号素材</button>
-            <button onclick="switchPoolFilter('struct','haibao',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">海报素材</button>
-            <button onclick="switchPoolFilter('struct','diedai',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">迭代素材</button>
+            <button onclick="switchPoolFilter('struct','yuanpian',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">原片</button>
+            <button onclick="switchPoolFilter('struct','zhujie',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">注解</button>
+            <button onclick="switchPoolFilter('struct','jieshuo',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">解说</button>
+            <button onclick="switchPoolFilter('struct','diedai',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">迭代</button>
+            <button onclick="switchPoolFilter('struct','guangboju',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">广播剧</button>
+            <button onclick="switchPoolFilter('struct','gunping',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">滚屏</button>
+            <button onclick="switchPoolFilter('struct','jieya',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">解压</button>
+            <button onclick="switchPoolFilter('struct','xiaoshuoaigc',this)" class="filter-pool-struct px-3 py-1.5 rounded text-xs font-medium text-slate-400 hover:text-slate-700">小说AIGC</button>
           </div>
           <button onclick="applyPoolFilter()" class="px-2 py-1 bg-blue-500 hover:bg-blue-400 text-white rounded text-xs">查询</button>
         </div>
@@ -733,187 +736,42 @@
       <table class="w-full">
         <thead>
           <tr>
-            <th class="w-8"></th>
-            <th>作品</th>
-            <th>类型</th>
+            <th>素材</th>
+            <th>所属作品</th>
             <th>题材</th>
-            <th>评级</th>
-            <th>素材数</th>
-            <th>使用数</th>
-            <th>使用率</th>
+            <th>缩略图</th>
+            <th>结构类型</th>
+            <th>生产类别</th>
+            <th>等级</th>
             <th>总广告</th>
             <th>累计消耗</th>
-            <th>平均消耗</th>
+            <th>CTR</th>
+            <th>创作者</th>
+            <th>上传时间</th>
+            <th>状态</th>
           </tr>
         </thead>
         <tbody id="poolTableBody">
-          <!-- Row 1: 都市重生 S -->
-          <tr class="pool-row cursor-pointer" onclick="togglePoolRow('pool-detail-1')">
-            <td><span class="pool-arrow text-[10px] text-slate-400">▶</span></td>
-            <td class="font-semibold text-slate-700">都市重生</td>
-            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
-            <td>都市男频</td>
-            <td><span class="pill grade-S">S</span></td>
-            <td>5</td>
-            <td>4</td>
-            <td>80.0%</td>
-            <td>282</td>
-            <td>¥42.8万</td>
-            <td>¥8,560</td>
-          </tr>
-          <tr id="pool-detail-1" class="pool-detail hidden">
-            <td colspan="11">
-              <table class="w-full text-xs ml-4">
-                <thead>
-                  <tr>
-                    <th>素材</th>
-                    <th>缩略图</th>
-                    <th>结构类型</th>
-                    <th>生产类别</th>
-                    <th>等级</th>
-                    <th>总广告</th>
-                    <th>累计消耗</th>
-                    <th>CTR</th>
-                    <th>创作者</th>
-                    <th>上传时间</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td class="font-medium">钩子 V15</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-blue-400 to-amber-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>92</td><td>¥12,800</td><td>3.2%</td><td>林小雨</td><td>05-23 14:30</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">爽点剪辑 V8</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-blue-500 to-red-600"></div></td><td><span class="px-1 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>74</td><td>¥9,600</td><td>2.8%</td><td>林小雨</td><td>05-23 11:20</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">反转开场 V5</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-amber-400 to-indigo-600"></div></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>58</td><td>¥7,200</td><td>2.5%</td><td>陈思远</td><td>05-22 18:05</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">情感线 V3</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-red-400 to-blue-500"></div></td><td><span class="px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>36</td><td>¥4,800</td><td>2.1%</td><td>王浩然</td><td>05-22 09:40</td><td><span class="text-slate-400">已下架</span></td></tr>
-                  <tr><td class="font-medium">悬念开头 V2</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-yellow-400 to-amber-500"></div></td><td><span class="px-1 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>22</td><td>¥3,200</td><td>1.8%</td><td>赵雅琪</td><td>05-21 16:20</td><td><span class="text-slate-400">已下架</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Row 2: 古言冷面王爷 S -->
-          <tr class="pool-row cursor-pointer" onclick="togglePoolRow('pool-detail-2')">
-            <td><span class="pool-arrow text-[10px] text-slate-400">▶</span></td>
-            <td class="font-semibold text-slate-700">古言冷面王爷</td>
-            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td>古言女频</td>
-            <td><span class="pill grade-S">S</span></td>
-            <td>4</td>
-            <td>3</td>
-            <td>75.0%</td>
-            <td>188</td>
-            <td>¥28.6万</td>
-            <td>¥7,150</td>
-          </tr>
-          <tr id="pool-detail-2" class="pool-detail hidden">
-            <td colspan="11">
-              <table class="w-full text-xs ml-4">
-                <thead>
-                  <tr>
-                    <th>素材</th>
-                    <th>缩略图</th>
-                    <th>结构类型</th>
-                    <th>生产类别</th>
-                    <th>等级</th>
-                    <th>总广告</th>
-                    <th>累计消耗</th>
-                    <th>CTR</th>
-                    <th>创作者</th>
-                    <th>上传时间</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td class="font-medium">V6 虐恋版</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>68</td><td>¥10,200</td><td>3.5%</td><td>林小雨</td><td>05-23 16:10</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">V4 甜宠版</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td><span class="px-1 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>52</td><td>¥7,800</td><td>2.9%</td><td>陈思远</td><td>05-23 10:35</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">V3 反转版</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td><span class="px-1 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>40</td><td>¥5,600</td><td>2.6%</td><td>王浩然</td><td>05-22 15:50</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">V2 权谋版</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-purple-400 to-rose-600"></div></td><td><span class="px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>28</td><td>¥3,800</td><td>2.0%</td><td>赵雅琪</td><td>05-21 12:30</td><td><span class="text-slate-400">已下架</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Row 3: 战神归来 A -->
-          <tr class="pool-row cursor-pointer" onclick="togglePoolRow('pool-detail-3')">
-            <td><span class="pool-arrow text-[10px] text-slate-400">▶</span></td>
-            <td class="font-semibold text-slate-700">战神归来</td>
-            <td><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-600 text-[10px]">小说</span></td>
-            <td>战神</td>
-            <td><span class="pill grade-A">A</span></td>
-            <td>4</td>
-            <td>3</td>
-            <td>75.0%</td>
-            <td>146</td>
-            <td>¥18.6万</td>
-            <td>¥4,650</td>
-          </tr>
-          <tr id="pool-detail-3" class="pool-detail hidden">
-            <td colspan="11">
-              <table class="w-full text-xs ml-4">
-                <thead>
-                  <tr>
-                    <th>素材</th>
-                    <th>缩略图</th>
-                    <th>结构类型</th>
-                    <th>生产类别</th>
-                    <th>等级</th>
-                    <th>总广告</th>
-                    <th>累计消耗</th>
-                    <th>CTR</th>
-                    <th>创作者</th>
-                    <th>上传时间</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td class="font-medium">短挂 V10</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-amber-400 to-indigo-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>56</td><td>¥6,800</td><td>2.7%</td><td>林小雨</td><td>05-23 13:20</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">高燃 V8</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-blue-400 to-red-600"></div></td><td><span class="px-1 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>42</td><td>¥5,200</td><td>2.4%</td><td>陈思远</td><td>05-22 20:15</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">复仇版 V6</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td><span class="px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>30</td><td>¥3,800</td><td>2.0%</td><td>王浩然</td><td>05-22 08:45</td><td><span class="text-slate-400">已下架</span></td></tr>
-                  <tr><td class="font-medium">热血版 V4</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-yellow-500 to-red-500"></div></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>18</td><td>¥2,400</td><td>1.7%</td><td>赵雅琪</td><td>05-21 14:10</td><td><span class="text-slate-400">已下架</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Row 4: 玄幻逆袭 A -->
-          <tr class="pool-row cursor-pointer" onclick="togglePoolRow('pool-detail-4')">
-            <td><span class="pool-arrow text-[10px] text-slate-400">▶</span></td>
-            <td class="font-semibold text-slate-700">玄幻逆袭</td>
-            <td><span class="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 text-[10px]">短剧</span></td>
-            <td>玄幻</td>
-            <td><span class="pill grade-A">A</span></td>
-            <td>3</td>
-            <td>2</td>
-            <td>66.7%</td>
-            <td>112</td>
-            <td>¥14.2万</td>
-            <td>¥4,733</td>
-          </tr>
-          <tr id="pool-detail-4" class="pool-detail hidden">
-            <td colspan="11">
-              <table class="w-full text-xs ml-4">
-                <thead>
-                  <tr>
-                    <th>素材</th>
-                    <th>缩略图</th>
-                    <th>结构类型</th>
-                    <th>生产类别</th>
-                    <th>等级</th>
-                    <th>总广告</th>
-                    <th>累计消耗</th>
-                    <th>CTR</th>
-                    <th>创作者</th>
-                    <th>上传时间</th>
-                    <th>状态</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td class="font-medium">新版 V5</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>52</td><td>¥6,400</td><td>2.8%</td><td>林小雨</td><td>05-23 17:00</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">开服版 V3</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td><span class="px-1 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-B">B</span></td><td>36</td><td>¥4,200</td><td>2.2%</td><td>陈思远</td><td>05-22 14:30</td><td><span class="text-emerald-600">投放中</span></td></tr>
-                  <tr><td class="font-medium">修炼版 V2</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-cyan-400 to-blue-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>24</td><td>¥2,800</td><td>1.9%</td><td>王浩然</td><td>05-21 09:15</td><td><span class="text-slate-400">已下架</span></td></tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
+          <!-- 都市重生 / 都市男频 -->
+          <tr><td class="font-medium">钩子 V15</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-blue-400 to-amber-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>92</td><td>¥12,800</td><td>3.2%</td><td>林小雨</td><td>05-23 14:30</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">爽点剪辑 V8</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-blue-500 to-red-600"></div></td><td><span class="px-1 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>74</td><td>¥9,600</td><td>2.8%</td><td>林小雨</td><td>05-23 11:20</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">反转开场 V5</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-amber-400 to-indigo-600"></div></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>58</td><td>¥7,200</td><td>2.5%</td><td>陈思远</td><td>05-22 18:05</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">情感线 V3</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-red-400 to-blue-500"></div></td><td><span class="px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>36</td><td>¥4,800</td><td>2.1%</td><td>王浩然</td><td>05-22 09:40</td><td><span class="text-slate-400">已下架</span></td></tr>
+          <tr><td class="font-medium">悬念开头 V2</td><td class="text-slate-600">都市重生</td><td>都市男频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-yellow-400 to-amber-500"></div></td><td><span class="px-1 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>22</td><td>¥3,200</td><td>1.8%</td><td>赵雅琪</td><td>05-21 16:20</td><td><span class="text-slate-400">已下架</span></td></tr>
+          <!-- 古言冷面王爷 / 古言女频 -->
+          <tr><td class="font-medium">V6 虐恋版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-rose-400 to-pink-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-S">S</span></td><td>68</td><td>¥10,200</td><td>3.5%</td><td>林小雨</td><td>05-23 16:10</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">V4 甜宠版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-pink-400 to-fuchsia-600"></div></td><td><span class="px-1 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>52</td><td>¥7,800</td><td>2.9%</td><td>陈思远</td><td>05-23 10:35</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">V3 反转版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-fuchsia-400 to-purple-600"></div></td><td><span class="px-1 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>40</td><td>¥5,600</td><td>2.6%</td><td>王浩然</td><td>05-22 15:50</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">V2 权谋版</td><td class="text-slate-600">古言冷面王爷</td><td>古言女频</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-purple-400 to-rose-600"></div></td><td><span class="px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>28</td><td>¥3,800</td><td>2.0%</td><td>赵雅琪</td><td>05-21 12:30</td><td><span class="text-slate-400">已下架</span></td></tr>
+          <!-- 战神归来 / 战神 -->
+          <tr><td class="font-medium">短挂 V10</td><td class="text-slate-600">战神归来</td><td>战神</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-amber-400 to-indigo-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>56</td><td>¥6,800</td><td>2.7%</td><td>林小雨</td><td>05-23 13:20</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">高燃 V8</td><td class="text-slate-600">战神归来</td><td>战神</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-blue-400 to-red-600"></div></td><td><span class="px-1 py-0.5 rounded bg-sky-500/15 text-sky-700 text-[10px]">原片素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-A">A</span></td><td>42</td><td>¥5,200</td><td>2.4%</td><td>陈思远</td><td>05-22 20:15</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">复仇版 V6</td><td class="text-slate-600">战神归来</td><td>战神</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-red-400 to-amber-600"></div></td><td><span class="px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-700 text-[10px]">迭代素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>30</td><td>¥3,800</td><td>2.0%</td><td>王浩然</td><td>05-22 08:45</td><td><span class="text-slate-400">已下架</span></td></tr>
+          <tr><td class="font-medium">热血版 V4</td><td class="text-slate-600">战神归来</td><td>战神</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-yellow-500 to-red-500"></div></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>18</td><td>¥2,400</td><td>1.7%</td><td>赵雅琪</td><td>05-21 14:10</td><td><span class="text-slate-400">已下架</span></td></tr>
+          <!-- 玄幻逆袭 / 玄幻 -->
+          <tr><td class="font-medium">新版 V5</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-emerald-400 to-teal-600"></div></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">视频号素材</span></td><td><span class="px-1 py-0.5 rounded bg-violet-500/15 text-violet-700 text-[10px]">AI</span></td><td><span class="pill grade-A">A</span></td><td>52</td><td>¥6,400</td><td>2.8%</td><td>林小雨</td><td>05-23 17:00</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">开服版 V3</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-teal-400 to-cyan-600"></div></td><td><span class="px-1 py-0.5 rounded bg-rose-500/15 text-rose-700 text-[10px]">海报素材</span></td><td><span class="px-1 py-0.5 rounded bg-blue-500/15 text-blue-700 text-[10px]">AI辅助</span></td><td><span class="pill grade-B">B</span></td><td>36</td><td>¥4,200</td><td>2.2%</td><td>陈思远</td><td>05-22 14:30</td><td><span class="text-emerald-600">投放中</span></td></tr>
+          <tr><td class="font-medium">修炼版 V2</td><td class="text-slate-600">玄幻逆袭</td><td>玄幻</td><td><div class="w-10 h-6 rounded bg-gradient-to-br from-cyan-400 to-blue-600"></div></td><td><span class="px-1 py-0.5 rounded bg-amber-500/15 text-amber-700 text-[10px]">口播网赚</span></td><td><span class="px-1 py-0.5 rounded bg-slate-500/15 text-slate-700 text-[10px]">人工</span></td><td><span class="pill grade-B">B</span></td><td>24</td><td>¥2,800</td><td>1.9%</td><td>王浩然</td><td>05-21 09:15</td><td><span class="text-slate-400">已下架</span></td></tr>
         </tbody>
       </table>
       <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
